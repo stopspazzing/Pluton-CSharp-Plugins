@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlutonEssentials", "PlutonEssentials\PlutonEssentials.csproj", "{5AF2870E-346A-46B6-A0E5-6FB69627E21E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5AF2870E-346A-46B6-A0E5-6FB69627E21E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5AF2870E-346A-46B6-A0E5-6FB69627E21E}.Debug|x86.Build.0 = Debug|Any CPU
+		{5AF2870E-346A-46B6-A0E5-6FB69627E21E}.Release|x86.ActiveCfg = Release|Any CPU
+		{5AF2870E-346A-46B6-A0E5-6FB69627E21E}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		Policies = $0
+		$0.DotNetNamingPolicy = $1
+		$1.DirectoryNamespaceAssociation = None
+		$1.ResourceNamePolicy = FileFormatDefault
+		$0.TextStylePolicy = $2
+		$2.inheritsSet = null
+		$2.scope = text/x-csharp
+		$0.CSharpFormattingPolicy = $3
+		$3.AfterDelegateDeclarationParameterComma = True
+		$3.inheritsSet = Mono
+		$3.inheritsScope = text/x-csharp
+		$3.scope = text/x-csharp
+		$0.TextStylePolicy = $4
+		$4.FileWidth = 120
+		$4.TabsToSpaces = False
+		$4.inheritsSet = VisualStudio
+		$4.inheritsScope = text/plain
+		$4.scope = text/plain
+		$0.StandardHeader = $5
+		$5.Text = 
+		$5.IncludeInNewFiles = True
+		$0.VersionControlPolicy = $6
+		$6.inheritsSet = Mono
+		version = 1.0
+	EndGlobalSection
+EndGlobal
