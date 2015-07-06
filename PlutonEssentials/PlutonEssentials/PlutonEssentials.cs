@@ -65,18 +65,14 @@ namespace PlutonEssentials
 				ConfigFile.Save();
 			}
 			IniParser GetConfig = Plugin.GetIni("PlutonEssentials");
-			Commands.Register(GetConfig.GetSetting("Commands", "ShowMyStats", "mystats")).setCallback("Mystats");
-			Commands.Register(GetConfig.GetSetting("Commands", "ShowStatsOther", "statsof")).setCallback("StatsOf");
+			Commands.Register(GetConfig.GetSetting("Commands", "ShowMyStats", "mystats")).setCallback("mystats");
+			Commands.Register(GetConfig.GetSetting("Commands", "ShowStatsOther", "statsof")).setCallback("statsof");
 			Commands.Register(GetConfig.GetSetting("Commands", "ShowLocation", "whereami")).setCallback("whereami");
 			Commands.Register(GetConfig.GetSetting("Commands", "ShowOnlinePlayers", "players")).setCallback("players");
 			Commands.Register(GetConfig.GetSetting("Commands", "Help", "help")).setCallback("help");
 			Commands.Register(GetConfig.GetSetting("Commands", "Commands", "commands")).setCallback("commands");
 			Commands.Register(GetConfig.GetSetting("Commands", "Description", "whatis")).setCallback("whatis");
 			Commands.Register(GetConfig.GetSetting("Commands", "Usage", "howto")).setCallback("howto");
-		}
-
-		public void GenerateConfig()
-		{
 		}
 
 		public void ReloadTimers()
@@ -93,14 +89,14 @@ namespace PlutonEssentials
 			}
 		}
 
-		public void Mystats(string[] args, Player player) {
+		public void mystats(string[] args, Player player) {
 			PlayerStats stats = player.Stats;
 			player.Message(String.Format("You have {0} kills and {1} deaths!", stats.Kills, stats.Deaths));
 			player.Message(String.Format("You have taken {0} dmg, and caused {1} in total!", stats.TotalDamageTaken, stats.TotalDamageDone));
 			return;
 		}
 
-		public void StatsOf(string[] args, Player player) {
+		public void statsof(string[] args, Player player) {
 			Player pOther = Player.Find(String.Join(" ", args[0]));
 			if (pOther != null) {
 				PlayerStats stats2 = pOther.Stats;
@@ -115,7 +111,7 @@ namespace PlutonEssentials
 		public void whereami(string[] args, Player player)
 		{
 			player.Message (player.Location.ToString ());
-				return;
+			return;
 		}
 
 		public void players(string[] args, Player player)
@@ -128,13 +124,16 @@ namespace PlutonEssentials
 		public void help(string[] args, Player player)
 		{
 			IniParser ConfigFile = Plugin.GetIni("PlutonEssentials") ;
-			foreach (string arg in ConfigFile.EnumSection("HelpMessage")) {
-				player.Message(arg);
+			foreach (string key in ConfigFile.EnumSection("HelpMessage")) {
+				player.Message(ConfigFile.GetSetting("HelpMessage", key) );
 			}
 		}
 
 		public void commands(string[] args, Player player)
 		{
+			foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins) {
+				cc.Add(pl.Value.chatCommands);
+			}
 			List<string> list = new List<string>();
 			foreach (ChatCommands cm in cc) {
 				list.AddRange(cm.getCommands());
@@ -144,6 +143,9 @@ namespace PlutonEssentials
 
 		public void whatis(string[] args, Player player)
 		{
+			foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins) {
+				cc.Add(pl.Value.chatCommands);
+			}
 			if (args.Length < 1)
 				player.Message("You must provide a command name");
 			else {
@@ -158,6 +160,9 @@ namespace PlutonEssentials
 
 		public void howto(string[] args, Player player)
 		{
+			foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins) {
+				cc.Add(pl.Value.chatCommands);
+			}
 			if (args.Length < 1)
 				player.Message("You must provide a command name");
 			else {
@@ -175,7 +180,7 @@ namespace PlutonEssentials
 		{
 			IniParser ConfigFile = Instance.Plugin.GetIni("PlutonEssentials") ;
 			foreach (string arg in ConfigFile.EnumSection("BroadcastMessages")) {
-				Instance.Server.Broadcast(arg);
+				Instance.Server.Broadcast(ConfigFile.GetSetting("BroadcastMessages", arg));
 			}
 		}
 	}

@@ -7,8 +7,9 @@
     <OutputType>Library</OutputType>
     <RootNamespace>PlutonEssentials</RootNamespace>
     <AssemblyName>PlutonEssentials</AssemblyName>
-    <ReleaseVersion>1.0</ReleaseVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,29 +35,26 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\..\Downloads\stable-patched\Assembly-CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Pluton">
-      <HintPath>..\..\..\..\Downloads\stable-patched\Pluton.dll</HintPath>
-    </Reference>
     <Reference Include="System">
       <HintPath>..\..\..\..\ownCloud\rust\dll%27s\System.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\ownCloud\rust\clean dll%27s\UnityEngine.dll</HintPath>
+    <Reference Include="System.Threading">
+      <HintPath>..\..\..\..\rust\clean dll%27s\System.Threading.dll</HintPath>
     </Reference>
-    <Reference Include="Behave.Unity.Runtime">
-      <HintPath>..\..\..\..\ownCloud\rust\clean dll%27s\Behave.Unity.Runtime.dll</HintPath>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\..\..\rust\clean dll%27s\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="Behave.Unity.Assets">
-      <HintPath>..\..\..\..\ownCloud\rust\clean dll%27s\Behave.Unity.Assets.dll</HintPath>
+    <Reference Include="Pluton">
+      <HintPath>..\..\..\..\rust\clean dll%27s\Pluton.dll</HintPath>
     </Reference>
     <Reference Include="protobuf-net">
-      <HintPath>..\..\..\..\ownCloud\rust\clean dll%27s\protobuf-net.dll</HintPath>
+      <HintPath>..\..\..\..\rust\clean dll%27s\protobuf-net.dll</HintPath>
     </Reference>
     <Reference Include="RustBuild">
-      <HintPath>..\..\..\..\ownCloud\rust\clean dll%27s\RustBuild.dll</HintPath>
+      <HintPath>..\..\..\..\rust\clean dll%27s\RustBuild.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\..\..\rust\clean dll%27s\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>
