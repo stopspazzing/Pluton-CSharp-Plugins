@@ -47,9 +47,9 @@ namespace PlutonEssentials
 				ConfigFile.AddSetting("Config", "permanentTime", "-1");
 				ConfigFile.AddSetting("Config", "timescale", "30.0");
 
-                ConfigFile.AddSetting("Config", "broadcastInterval", "600000");
+				ConfigFile.AddSetting("Config", "broadcastInterval", "600000");
 
-                ConfigFile.AddSetting("Commands", "ShowMyStats", "mystats");
+				ConfigFile.AddSetting("Commands", "ShowMyStats", "mystats");
 				ConfigFile.AddSetting("Commands", "ShowStatsOther", "statsof");
 
 				ConfigFile.AddSetting("Commands", "ShowLocation", "whereami");
@@ -134,8 +134,8 @@ namespace PlutonEssentials
 
 		public void commands(string[] args, Player player)
 		{
-            List<ChatCommands> cc = new List<ChatCommands>();
-            foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins) {
+			List<ChatCommands> cc = new List<ChatCommands>();
+			foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins) {
 				cc.Add(pl.Value.chatCommands);
 			}
 			List<string> list = new List<string>();
@@ -147,8 +147,8 @@ namespace PlutonEssentials
 
 		public void whatis(string[] args, Player player)
 		{
-            List<ChatCommands> cc = new List<ChatCommands>();
-            foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins) {
+			List<ChatCommands> cc = new List<ChatCommands>();
+			foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins) {
 				cc.Add(pl.Value.chatCommands);
 			}
 			if (args.Length < 1)
@@ -165,8 +165,8 @@ namespace PlutonEssentials
 
 		public void howto(string[] args, Player player)
 		{
-            List<ChatCommands> cc = new List<ChatCommands>();
-            foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins) {
+			List<ChatCommands> cc = new List<ChatCommands>();
+			foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins) {
 				cc.Add(pl.Value.chatCommands);
 			}
 			if (args.Length < 1)
@@ -193,11 +193,11 @@ namespace PlutonEssentials
 
 	public class ServerTimers
 	{
-		public readonly System.Timers.Timer _adstimer;
+		public readonly Timer _adstimer;
 
 		public ServerTimers(double ads)
 		{
-			_adstimer = new System.Timers.Timer(ads);
+			_adstimer = new Timer(ads);
 
 			Debug.Log("Broadcast timer started!");
 			_adstimer.Elapsed += new ElapsedEventHandler(this._adstimer_Elapsed);
@@ -223,6 +223,5 @@ namespace PlutonEssentials
 		{
 			PlutonEssentials.Advertise();
 		}
-
 	}
 }
