@@ -11,8 +11,7 @@ namespace PlutonEssentials
 		const string author = "Pluton Team";
 		const string version = "0.9.1";
 
-        private static Timer aTimer;
-        public static PlutonEssentials Instance;
+        private Timer aTimer;
 
 		public void On_ServerInit()
 		{
@@ -34,7 +33,6 @@ namespace PlutonEssentials
 
 		public void On_PluginInit()
 		{
-			Instance = this;
 			if (Plugin.IniExists("PlutonEssentials")) {
 				Debug.Log("PlutonEssentials config loaded!");
 			} else {
@@ -77,19 +75,21 @@ namespace PlutonEssentials
 			Commands.Register(GetConfig.GetSetting("Commands", "Description", "whatis")).setCallback(whatis);
 			Commands.Register(GetConfig.GetSetting("Commands", "Usage", "howto")).setCallback(howto);
             int broadcast_time = int.Parse(GetConfig.GetSetting("Config", "broadcastInterval", "600000"));
-            aTimer = new System.Timers.Timer(broadcast_time);
+            aTimer = new Timer(broadcast_time);
             aTimer.Elapsed += Advertise;
             aTimer.Enabled = true;
         }
 
-		public void mystats(string[] args, Player player) {
+		public void mystats(string[] args, Player player)
+        {
 			PlayerStats stats = player.Stats;
 			player.Message(string.Format("You have {0} kills and {1} deaths!", stats.Kills, stats.Deaths));
 			player.Message(string.Format("You have taken {0} dmg, and caused {1} in total!", stats.TotalDamageTaken, stats.TotalDamageDone));
 			return;
 		}
 
-		public void statsof(string[] args, Player player) {
+		public void statsof(string[] args, Player player)
+        {
 			Player pOther = Player.Find(string.Join(" ", args[0]));
 			if (pOther != null) {
 				PlayerStats stats2 = pOther.Stats;
@@ -172,11 +172,12 @@ namespace PlutonEssentials
 			}
 		}
 
-        private static void Advertise(object source, ElapsedEventArgs e)
+        void Advertise(object source, ElapsedEventArgs e)
 		{
-			IniParser ConfigFile = Instance.Plugin.GetIni("PlutonEssentials") ;
+            Server.Broadcast("Broadcast message after me!");
+			IniParser ConfigFile = Plugin.GetIni("PlutonEssentials") ;
 			foreach (string arg in ConfigFile.EnumSection("BroadcastMessages")) {
-				Instance.Server.Broadcast(ConfigFile.GetSetting("BroadcastMessages", arg));
+				Server.Broadcast(ConfigFile.GetSetting("BroadcastMessages", arg));
 			}
 		}
 	}
