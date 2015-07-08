@@ -200,7 +200,7 @@ namespace PlutonEssentials
 			_adstimer = new Timer(ads);
 
 			Debug.Log("Broadcast timer started!");
-			_adstimer.Elapsed += new ElapsedEventHandler(this._adstimer_Elapsed);
+			_adstimer.Elapsed += _adstimer_Elapsed;
 		}
 
 		public void Dispose()
@@ -219,7 +219,7 @@ namespace PlutonEssentials
 			_adstimer.Stop();
 		}
 
-		private void _adstimer_Elapsed(object sender, ElapsedEventArgs e)
+		static void _adstimer_Elapsed(object sender, ElapsedEventArgs e)
 		{
 			PlutonEssentials.Advertise();
 		}
