@@ -1,0 +1,14 @@
+*.mdw
+*.suo
+/bin/*
+*.dll
+*.sln
+*.userprefs
+*.csproj
+/obj/*
+*.mdb
+*.txt
+*Assembly*.cs
+*.xml
+*.pdb
+*.cache
