@@ -11,7 +11,7 @@ namespace PlutonEssentials
 		const string author = "Pluton Team";
 		const string version = "0.9.1";
 
-        private Timer aTimer;
+		private Timer aTimer;
 
 		public void On_ServerInit()
 		{
@@ -176,8 +176,8 @@ namespace PlutonEssentials
 		{
 			Server.Broadcast("Broadcast message after me!");
 			IniParser ConfigFile = Plugin.GetIni("PlutonEssentials") ;
-			foreach (string arg in ConfigFile.EnumSection("BroadcastMessages")) {
-				Server.Broadcast(ConfigFile.GetSetting("BroadcastMessages", arg));
+			foreach (string arg in ConfigFile.EnumSection("BroadcastMessage")) {
+				Server.Broadcast(ConfigFile.GetSetting("BroadcastMessage", arg));
 			}
 		}
 	}
