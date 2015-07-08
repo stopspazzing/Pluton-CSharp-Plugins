@@ -174,7 +174,6 @@ namespace PlutonEssentials
 
 		void Advertise(object source, ElapsedEventArgs e)
 		{
-			Server.Broadcast("Broadcast message after me!");
 			IniParser ConfigFile = Plugin.GetIni("PlutonEssentials") ;
 			foreach (string arg in ConfigFile.EnumSection("BroadcastMessage")) {
 				Server.Broadcast(ConfigFile.GetSetting("BroadcastMessage", arg));
