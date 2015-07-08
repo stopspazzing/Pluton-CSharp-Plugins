@@ -1,19 +1,19 @@
 ﻿using Pluton;
-
+using Pluton.Events;
 namespace InfiniteAmmo
 {
 	public class InfiniteAmmo : CSharpPlugin
 	{
 		const string _creator = "Corrosion X";
-		const string _version = "0.1";
-		public void On_WeaponThrow(ThrownWeapon thrownWeapon, BaseEntity.RPCMessage msg)
+		const string _version = "0.6";
+		public void On_WeaponThrow(WeaponThrow wt)
 		{
-			if (thrownWeapon.ownerPlayer.IsAlive()) 
+			if (wt.Player != null) 
 			{
-				if (thrownWeapon.GetItem() != null)
+				if (wt.Weapon != null)
 				{
-					Item item = thrownWeapon.GetItem();
-					thrownWeapon.ownerPlayer.inventory.GiveItem(item);
+					Item item = wt.Weapon.GetItem();
+					wt.Player.Inventory._inv.GiveItem(item.amount += 1);
 				}
 				else
 				{
@@ -21,22 +21,22 @@ namespace InfiniteAmmo
 				}
 			}
 		}
-		public void On_Shoot(BaseProjectile baseProjectile, BaseEntity.RPCMessage msg)
+		public void On_Shoot(ShootEvent se)
 		{
-			if(baseProjectile.ownerPlayer.IsAlive())
+			if(se.Player != null)
 			{
-				baseProjectile.primaryMagazine.contents = baseProjectile.primaryMagazine.capacity;
-				baseProjectile.GetItem().condition = baseProjectile.GetItem().info.condition.max;
-				baseProjectile.SendNetworkUpdateImmediate();
+				se.BaseProjectile.primaryMagazine.contents = se.BaseProjectile.primaryMagazine.capacity;
+                se.BaseProjectile.GetItem().condition = se.BaseProjectile.GetItem().info.condition.max;
+                se.BaseProjectile.SendNetworkUpdateImmediate();
 			}
 		}
-		public void On_RocketShoot(BaseLauncher baseLauncher, BaseEntity.RPCMessage msg, BaseEntity baseEntity)
+		public void On_RocketShoot(RocketShootEvent rse)
 		{
-			if(baseLauncher.ownerPlayer.IsAlive())
+			if(rse.Player != null)
 			{
-				baseLauncher.primaryMagazine.contents = baseLauncher.primaryMagazine.capacity;
-				baseLauncher.GetItem().condition = baseLauncher.GetItem().info.condition.max;
-				baseLauncher.SendNetworkUpdateImmediate();
+                rse.BaseLauncher.primaryMagazine.contents = rse.BaseLauncher.primaryMagazine.capacity;
+                rse.BaseLauncher.GetItem().condition = rse.BaseLauncher.GetItem().info.condition.max;
+                rse.BaseLauncher.SendNetworkUpdateImmediate();
 			}
 		}
 

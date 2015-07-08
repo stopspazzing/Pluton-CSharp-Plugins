@@ -8,9 +8,8 @@ namespace PlutonEssentials
 {
 	public class PlutonEssentials : CSharpPlugin
 	{
-		const string _version = "0.9.1";
-		const string _creator = "Pluton Team";
-		List<ChatCommands> cc = new List<ChatCommands>();
+		const string author = "Pluton Team";
+		const string version = "0.9.1";
 
 		public static ServerTimers Timers;
 		public static PlutonEssentials Instance;
@@ -48,7 +47,9 @@ namespace PlutonEssentials
 				ConfigFile.AddSetting("Config", "permanentTime", "-1");
 				ConfigFile.AddSetting("Config", "timescale", "30.0");
 
-				ConfigFile.AddSetting("Commands", "ShowMyStats", "mystats");
+                ConfigFile.AddSetting("Config", "broadcastInterval", "600000");
+
+                ConfigFile.AddSetting("Commands", "ShowMyStats", "mystats");
 				ConfigFile.AddSetting("Commands", "ShowStatsOther", "statsof");
 
 				ConfigFile.AddSetting("Commands", "ShowLocation", "whereami");
@@ -133,7 +134,8 @@ namespace PlutonEssentials
 
 		public void commands(string[] args, Player player)
 		{
-			foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins) {
+            List<ChatCommands> cc = new List<ChatCommands>();
+            foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins) {
 				cc.Add(pl.Value.chatCommands);
 			}
 			List<string> list = new List<string>();
@@ -145,7 +147,8 @@ namespace PlutonEssentials
 
 		public void whatis(string[] args, Player player)
 		{
-			foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins) {
+            List<ChatCommands> cc = new List<ChatCommands>();
+            foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins) {
 				cc.Add(pl.Value.chatCommands);
 			}
 			if (args.Length < 1)
@@ -162,7 +165,8 @@ namespace PlutonEssentials
 
 		public void howto(string[] args, Player player)
 		{
-			foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins) {
+            List<ChatCommands> cc = new List<ChatCommands>();
+            foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins) {
 				cc.Add(pl.Value.chatCommands);
 			}
 			if (args.Length < 1)
