@@ -12,3 +12,4 @@
 *.xml
 *.pdb
 *.cache
+*.csproj

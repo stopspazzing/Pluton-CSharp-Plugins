@@ -8,6 +8,8 @@ namespace PlutonEssentials
 {
 	public class PlutonEssentials : CSharpPlugin
 	{
+		const string _version = "0.9.1";
+		const string _creator = "Pluton Team";
 		List<ChatCommands> cc = new List<ChatCommands>();
 
 		public static ServerTimers Timers;

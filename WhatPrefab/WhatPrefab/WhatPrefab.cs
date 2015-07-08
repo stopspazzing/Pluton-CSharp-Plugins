@@ -1,11 +1,12 @@
 ﻿using Pluton;
 using UnityEngine;
-using System;
 
 namespace WhatPrefab
 {
 	public class WhatPrefab : CSharpPlugin
 	{
+		const string _creator = "Corrosion X";
+		const string _version = "0.1";
 		public void On_PluginInit()
 		{
 			Commands.Register("start").setCallback("start");
@@ -15,14 +16,14 @@ namespace WhatPrefab
 		public void start(string[] args, Player player)
 		{
 			Vector3 lookpos = player.GetLookPoint ();
-			foreach (BaseNetworkable bn in UnityEngine.Object.FindObjectsOfType<BaseNetworkable>()) { 
-				if(lookpos == bn.transform.position){
-					player.
+			foreach (BaseNetworkable bn in UnityEngine.Object.FindObjectsOfType<BaseNetworkable>()) 
+			{ 
+				if(lookpos == bn.transform.position)
+				{
+					player.Message("That prefab is: " + bn.name);
 				}
 			}
-
 		}
-
 	}
 }
 
