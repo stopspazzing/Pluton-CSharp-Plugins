@@ -7,7 +7,7 @@ namespace NoDurability
 	{
 		const string author = "Corrosion X";
 		const string version = "0.7";
-		public void On_UseItem(UseItemEvent eie)
+		public void On_ItemUsed(ItemUsedEvent eie)
 		{
 			BasePlayer player = eie.Item._item.GetOwnerPlayer();
 			if (player == null) return;
