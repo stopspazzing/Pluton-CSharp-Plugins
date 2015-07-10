@@ -1,5 +1,6 @@
 ﻿using Pluton;
 using Pluton.Events;
+
 namespace InfiniteAmmo
 {
 	public class InfiniteAmmo : CSharpPlugin
@@ -26,17 +27,17 @@ namespace InfiniteAmmo
 			if(se.Player != null)
 			{
 				se.BaseProjectile.primaryMagazine.contents = se.BaseProjectile.primaryMagazine.capacity;
-                se.BaseProjectile.GetItem().condition = se.BaseProjectile.GetItem().info.condition.max;
-                se.BaseProjectile.SendNetworkUpdateImmediate();
+				se.BaseProjectile.GetItem().condition = se.BaseProjectile.GetItem().info.condition.max;
+				se.BaseProjectile.SendNetworkUpdateImmediate();
 			}
 		}
 		public void On_RocketShoot(RocketShootEvent rse)
 		{
 			if(rse.Player != null)
 			{
-                rse.BaseLauncher.primaryMagazine.contents = rse.BaseLauncher.primaryMagazine.capacity;
-                rse.BaseLauncher.GetItem().condition = rse.BaseLauncher.GetItem().info.condition.max;
-                rse.BaseLauncher.SendNetworkUpdateImmediate();
+				rse.BaseLauncher.primaryMagazine.contents = rse.BaseLauncher.primaryMagazine.capacity;
+				rse.BaseLauncher.GetItem().condition = rse.BaseLauncher.GetItem().info.condition.max;
+				rse.BaseLauncher.SendNetworkUpdateImmediate();
 			}
 		}
 
