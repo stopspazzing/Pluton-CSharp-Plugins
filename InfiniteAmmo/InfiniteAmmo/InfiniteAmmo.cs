@@ -7,7 +7,7 @@ namespace InfiniteAmmo
 	{
 		const string _creator = "Corrosion X";
 		const string _version = "0.6";
-		public void On_WeaponThrow(WeaponThrow wt)
+		public void On_WeaponThrow(WeaponThrowEvent wt)
 		{
 			if (wt.Player != null) 
 			{
