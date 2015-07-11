@@ -41,9 +41,6 @@ namespace PlutonEssentials
 
 		public void On_PluginInit()
 		{
-			DataStore.Flush("StructureRecorder");
-			DataStore.Flush("StructureRecorderEveryone");
-
 			if (Plugin.IniExists("PlutonEssentials")) {
 				Debug.Log("PlutonEssentials config loaded!");
 			} else {
@@ -90,9 +87,13 @@ namespace PlutonEssentials
 			aTimer = new Timer(broadcast_time);
 			aTimer.Elapsed += Advertise;
 			aTimer.Enabled = true;
-			if (!Server.Loaded) return;
-			Structures = new Dictionary<string, Structure>();
-			LoadStructures();
+			DataStore.Flush("StructureRecorder");
+			DataStore.Flush("StructureRecorderEveryone");
+			if (Server.Loaded)
+			{
+				Structures = new Dictionary<string, Structure>();
+				LoadStructures();
+			}
         }
 
 		public void On_PlayerConnected(Player player){

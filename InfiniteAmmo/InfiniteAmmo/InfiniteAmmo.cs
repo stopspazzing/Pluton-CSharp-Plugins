@@ -10,10 +10,7 @@ namespace InfiniteAmmo
 		const string _version = "0.6";
 		public void On_WeaponThrow(WeaponThrowEvent wte)
 		{
-			if (wte.Weapon != null)
-			{
 				wte.Weapon.GetItem().amount++;
-			}
 		}
 
 		public void On_Shooting(ShootEvent se)
