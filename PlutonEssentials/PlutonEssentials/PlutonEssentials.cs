@@ -12,9 +12,6 @@ namespace PlutonEssentials
 {
 	public class PlutonEssentials : CSharpPlugin
 	{
-		private const string author = "Pluton Team";
-		private const string version = "1.2";
-
 		public Dictionary<string, Structure> Structures;
 		private Timer aTimer;
 
@@ -41,6 +38,8 @@ namespace PlutonEssentials
 
 		public void On_PluginInit()
 		{
+			Author = "Pluton Team";
+			Version = "1.2";
 			if (Plugin.IniExists("PlutonEssentials")) {
 				Debug.Log("PlutonEssentials config loaded!");
 			} else {
@@ -56,6 +55,8 @@ namespace PlutonEssentials
 				ConfigFile.AddSetting("Config", "broadcastInterval", "600000");
 				ConfigFile.AddSetting("Config", "welcomeMessage", "true");
 
+				ConfigFile.AddSetting("Config", "StructureRecorder", "false");
+
 				ConfigFile.AddSetting("Commands", "ShowMyStats", "mystats");
 				ConfigFile.AddSetting("Commands", "ShowStatsOther", "statsof");
 
@@ -68,7 +69,11 @@ namespace PlutonEssentials
 				ConfigFile.AddSetting("Commands", "Description", "whatis");
 				ConfigFile.AddSetting("Commands", "Usage", "howto");
 
-				ConfigFile.AddSetting("HelpMessage", "help_string0", "This is an empty help section");
+                ConfigFile.AddSetting("Commands", "StartStructureRecording", "srstop");
+                ConfigFile.AddSetting("Commands", "StopStructureRecording", "srstop");
+                ConfigFile.AddSetting("Commands", "BuildStructure", "srbuild");
+
+                ConfigFile.AddSetting("HelpMessage", "help_string0", "This is an empty help section");
 
 				ConfigFile.AddSetting("BroadcastMessage", "msg0", "This server is powered by Pluton, the new servermod!");
 				ConfigFile.AddSetting("BroadcastMessage", "msg1", "For more information visit our github repo: github.com/Notulp/Pluton or our forum: pluton-team.org");
@@ -83,7 +88,12 @@ namespace PlutonEssentials
 			Commands.Register(GetConfig.GetSetting("Commands", "Commands", "commands")).setCallback(commands);
 			Commands.Register(GetConfig.GetSetting("Commands", "Description", "whatis")).setCallback(whatis);
 			Commands.Register(GetConfig.GetSetting("Commands", "Usage", "howto")).setCallback(howto);
-			int broadcast_time = int.Parse(GetConfig.GetSetting("Config", "broadcastInterval", "600000"));
+			if (GetConfig.GetBoolSetting("Config", "StructureRecorder", false)) {
+				Commands.Register(GetConfig.GetSetting("Commands", "StartStructureRecording", "srstart")).setCallback (srstart);
+				Commands.Register(GetConfig.GetSetting("Commands", "StopStructureRecording", "srstop")).setCallback (srstop);
+				Commands.Register(GetConfig.GetSetting("Commands", "BuildStructure", "srbuild")).setCallback (srbuild);
+			}
+            int broadcast_time = int.Parse(GetConfig.GetSetting("Config", "broadcastInterval", "600000"));
 			aTimer = new Timer(broadcast_time);
 			aTimer.Elapsed += Advertise;
 			aTimer.Enabled = true;
@@ -206,57 +216,53 @@ namespace PlutonEssentials
 			}
 		}
 
-        public void On_Command(CommandEvent cmd)
+        public void srstart(string[] args, Player player)
         {
-            Player player = cmd.User;
-            string command = cmd.cmd;
-            string[] args = cmd.args;
-            if (command == "srstart")
+            if (args.Length == 0 || (args.Length == 1 && args[0] == ""))
             {
-                if (args.Length == 0 || (args.Length == 1 && args[0] == ""))
-                {
-                    player.Message("USAGE: /srstart StructureName");
-                    return;
-                }
-                if (DataStore.ContainsKey("StructureRecorder", player.SteamID))
-                {
-                    player.Message("Recording is already running");
-                    return;
-                }
-                string name = args[0];
-                StartRecording(name, player.SteamID);
-                player.Message("Recording was started on name \"" + name + "\"");
+                player.Message("USAGE: /srstart StructureName");
+                return;
             }
-            else if (command == "srstop")
+            if (DataStore.ContainsKey("StructureRecorder", player.SteamID))
             {
-                if (!DataStore.ContainsKey("StructureRecorder", player.SteamID))
-                {
-                    player.Message("There is nothing to stop");
-                    player.Message("Start one using: /srstart StructureName");
-                    return;
-                }
-                string name = (string)DataStore.Get("StructureRecorder", player.SteamID);
-                DataStore.Remove("StructureRecorder", player.SteamID);
-                StopRecording(name);
-                player.Message("Recording was stopped");
+                player.Message("Recording is already running");
+                return;
             }
-            else if (command == "srbuild")
+            string name = args[0];
+            StartRecording(name, player.SteamID);
+            player.Message("Recording was started on name \"" + name + "\"");
+        }
+
+        public void srstop(string[] args, Player player)
+        {
+            if (!DataStore.ContainsKey("StructureRecorder", player.SteamID))
             {
-                if (args.Length == 0 || (args.Length == 1 && args[0] == ""))
-                {
-                    player.Message("USAGE: /srbuild StructureName");
-                    return;
-                }
-                Structure structure;
-                Structures.TryGetValue(args[0], out structure);
-                if (structure == null)
-                {
-                    player.Message("Building wasn't found by name \"" + args[0] + "\"");
-                    return;
-                }
-                structure.Build(player.Location);
-                player.Message("Building was spawned");
+                player.Message("There is nothing to stop");
+                player.Message("Start one using: /srstart StructureName");
+                return;
             }
+            string name = (string)DataStore.Get("StructureRecorder", player.SteamID);
+            DataStore.Remove("StructureRecorder", player.SteamID);
+            StopRecording(name);
+            player.Message("Recording was stopped");
+        }
+
+        public void srbuild(string[] args, Player player)
+        {
+            if (args.Length == 0 || (args.Length == 1 && args[0] == ""))
+            {
+                player.Message("USAGE: /srbuild StructureName");
+                return;
+            }
+            Structure structure;
+            Structures.TryGetValue(args[0], out structure);
+            if (structure == null)
+            {
+                player.Message("Building wasn't found by name \"" + args[0] + "\"");
+                return;
+            }
+            structure.Build(player.Location);
+            player.Message("Building was spawned");
         }
 
         public void On_CombatEntityHurt(CombatEntityHurtEvent cehe)
