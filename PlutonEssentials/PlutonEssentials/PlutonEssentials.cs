@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace PlutonEssentials
 {
-	public class PlutonEssentials : CSharpPlugin
+    public partial class PlutonEssentials : CSharpPlugin
 	{
 		public Dictionary<string, Structure> Structures;
 		private Timer aTimer;
@@ -16,7 +16,7 @@ namespace PlutonEssentials
 		public void On_ServerInit()
 		{
 			Structures = new Dictionary<string, Structure>();
-			Callbacks.LoadStructures();
+			LoadStructures();
 
 			if (Plugin.IniExists("PlutonEssentials")) {
 				IniParser Config = Plugin.GetIni("PlutonEssentials") ;
@@ -78,18 +78,18 @@ namespace PlutonEssentials
 				ConfigFile.Save();
 			}
 			IniParser GetConfig = Plugin.GetIni("PlutonEssentials");
-			Commands.Register(GetConfig.GetSetting("Commands", "ShowMyStats", "mystats")).setCallback(Callbacks.Mystats);
-			Commands.Register(GetConfig.GetSetting("Commands", "ShowStatsOther", "statsof")).setCallback(Callbacks.Statsof);
-			Commands.Register(GetConfig.GetSetting("Commands", "ShowLocation", "whereami")).setCallback(Callbacks.Whereami);
-			Commands.Register(GetConfig.GetSetting("Commands", "ShowOnlinePlayers", "players")).setCallback(Callbacks.Players);
-			Commands.Register(GetConfig.GetSetting("Commands", "Help", "help")).setCallback(Callbacks.Help);
-			Commands.Register(GetConfig.GetSetting("Commands", "Commands", "commands")).setCallback(Callbacks.CommandS);
-			Commands.Register(GetConfig.GetSetting("Commands", "Description", "whatis")).setCallback(Callbacks.Whatis);
-			Commands.Register(GetConfig.GetSetting("Commands", "Usage", "howto")).setCallback(Callbacks.Howto);
+			Commands.Register(GetConfig.GetSetting("Commands", "ShowMyStats", "mystats")).setCallback(Mystats);
+			Commands.Register(GetConfig.GetSetting("Commands", "ShowStatsOther", "statsof")).setCallback(Statsof);
+			Commands.Register(GetConfig.GetSetting("Commands", "ShowLocation", "whereami")).setCallback(Whereami);
+			Commands.Register(GetConfig.GetSetting("Commands", "ShowOnlinePlayers", "players")).setCallback(Players);
+			Commands.Register(GetConfig.GetSetting("Commands", "Help", "help")).setCallback(Help);
+			Commands.Register(GetConfig.GetSetting("Commands", "Commands", "commands")).setCallback(CommandS);
+			Commands.Register(GetConfig.GetSetting("Commands", "Description", "whatis")).setCallback(Whatis);
+			Commands.Register(GetConfig.GetSetting("Commands", "Usage", "howto")).setCallback(Howto);
 			if (GetConfig.GetBoolSetting ("Config", "StructureRecorder")) {
-				Commands.Register(GetConfig.GetSetting ("Commands", "StartStructureRecording", "srstart")).setCallback(Callbacks.Srstart);
-				Commands.Register(GetConfig.GetSetting ("Commands", "StopStructureRecording", "srstop")).setCallback(Callbacks.Srstop);
-				Commands.Register(GetConfig.GetSetting ("Commands", "BuildStructure", "srbuild")).setCallback(Callbacks.Srbuild);
+				Commands.Register(GetConfig.GetSetting ("Commands", "StartStructureRecording", "srstart")).setCallback(Srstart);
+				Commands.Register(GetConfig.GetSetting ("Commands", "StopStructureRecording", "srstop")).setCallback(Srstop);
+				Commands.Register(GetConfig.GetSetting ("Commands", "BuildStructure", "srbuild")).setCallback(Srbuild);
 			}
 			aTimer.Dispose();
 			int broadcast_time = int.Parse(GetConfig.GetSetting("Config", "broadcastInterval", "600000"));

@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace PlutonEssentials
 {
-	public partial class Callbacks
+    public partial class PlutonEssentials
 	{
 		public void Mystats(string[] args, Player player)
 		{
@@ -38,14 +38,14 @@ namespace PlutonEssentials
 
 		public void Players(string[] args, Player player)
 		{
-			string msg = PlutonEssentials.Server.Players.Count == 1 ? "You are alone!" : string.Format ("There are: {0} players online!", Server.Players.Count);
+			string msg = Server.Players.Count == 1 ? "You are alone!" : string.Format ("There are: {0} players online!", Server.Players.Count);
 			player.Message (msg);
 			return;
 		}
 
 		public void Help(string[] args, Player player)
 		{
-			IniParser ConfigFile = PlutonEssentials.Plugin.GetIni("PlutonEssentials") ;
+			IniParser ConfigFile = Plugin.GetIni("PlutonEssentials") ;
 			foreach (string key in ConfigFile.EnumSection("HelpMessage")) {
 				player.Message(ConfigFile.GetSetting("HelpMessage", key) );
 			}
@@ -108,7 +108,7 @@ namespace PlutonEssentials
 				player.Message("USAGE: /srstart StructureName");
 				return;
 			}
-			if (DataStore.ContainsKey("StructureRecorder", player.SteamID))
+			if (DataStore.GetInstance().ContainsKey("StructureRecorder", player.SteamID))
 			{
 				player.Message("Recording is already running");
 				return;
@@ -126,7 +126,7 @@ namespace PlutonEssentials
 				player.Message("Start one using: /srstart StructureName");
 				return;
 			}
-			string name = (string)DataStore.Get("StructureRecorder", player.SteamID);
+            string name = (string)DataStore.Get("StructureRecorder", player.SteamID);
 			DataStore.Remove("StructureRecorder", player.SteamID);
 			StopRecording(name);
 			player.Message("Recording was stopped");
@@ -140,7 +140,7 @@ namespace PlutonEssentials
 				return;
 			}
 			Structure structure;
-			PlutonEssentials.Structures.TryGetValue(args[0], out structure);
+			Structures.TryGetValue(args[0], out structure);
 			if (structure == null)
 			{
 				player.Message("Building wasn't found by name \"" + args[0] + "\"");
@@ -151,9 +151,9 @@ namespace PlutonEssentials
 		}
 		public void StartRecording(string name, string steamID = "")
 		{
-			if (PlutonEssentials.Structures.ContainsKey(name))
+			if (Structures.ContainsKey(name))
 			{
-				PlutonEssentials.Structures.Remove(name);
+				Structures.Remove(name);
 				string path = Path.Combine(Util.GetStructuresFolder(), name + ".sps");
 				if (File.Exists(path))
 				{
@@ -169,13 +169,13 @@ namespace PlutonEssentials
 				DataStore.Add("StructureRecorder", steamID, name);
 			}
 			Structure structure = CreateStructure(name);
-			PlutonEssentials.Structures.Add(name, structure);
+			Structures.Add(name, structure);
 		}
 
 		public void StopRecording(string name)
 		{
 			Structure structure;
-			PlutonEssentials.Structures.TryGetValue(name, out structure);
+			Structures.TryGetValue(name, out structure);
 			DataStore.Remove("StructureRecorder", name);
 			structure.Export();
 		}
@@ -193,7 +193,7 @@ namespace PlutonEssentials
 				Directory.CreateDirectory(path);
 			}
 			var structuresPath = new DirectoryInfo(path);
-			PlutonEssentials.Structures.Clear();
+			Structures.Clear();
 			foreach (FileInfo file in structuresPath.GetFiles())
 			{
 				if (file.Extension.ToLower() == ".sps")
@@ -203,7 +203,7 @@ namespace PlutonEssentials
 						var formatter = new BinaryFormatter();
 						object thing = formatter.Deserialize(stream);
 						var structure = thing as Structure;
-						PlutonEssentials.Structures.Add(file.Name.Substring(0, file.Name.Length - 5), structure);
+						Structures.Add(file.Name.Substring(0, file.Name.Length - 5), structure);
 					}
 				}
 			}
