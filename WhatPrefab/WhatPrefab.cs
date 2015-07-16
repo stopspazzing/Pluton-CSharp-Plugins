@@ -20,6 +20,7 @@ namespace WhatPrefab
 			{ 
 				if(lookpos == bn.transform.position)
 				{
+					//use raycast
 					player.Message("That prefab is: " + bn.name);
 				}
 			}

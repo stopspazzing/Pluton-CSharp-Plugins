@@ -21,7 +21,7 @@ namespace EasyEntitySpawner
 			player.Message ("Spawn in Entities and Animals! Type /spawnhelp for more help");
 		}
 
-		public void spawnhereCallback(String[] args, Player player)
+		public void spawnhere(String[] args, Player player)
 		{
 			string entity = args[0];
 			int count;
@@ -32,7 +32,7 @@ namespace EasyEntitySpawner
 			spawnit(entity, loc, count);
 		}
 
-		public void spawnCallback(String[] args, Player player)
+		public void spawn(String[] args, Player player)
 		{
 			string entity = args[0];
 			int count;
@@ -58,7 +58,7 @@ namespace EasyEntitySpawner
 			BaseEntity newentity = GameManager.server.CreateEntity(entity, loc, default(Quaternion));
 			if (newentity)
 			{
-				newentity.Spawn(true);
+				newentity.Spawn();
 			}
 			return newentity;
 		}
