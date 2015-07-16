@@ -19,14 +19,14 @@ namespace PlutonEssentials
 
 		public void Statsof(string[] args, Player player)
 		{
-			Player pOther = Player.Find(string.Join(" ", args[0]));
+			Player pOther = Player.Find(string.Join(" ", args));
 			if (pOther != null) {
 				PlayerStats stats2 = pOther.Stats;
 				player.Message(string.Format(pOther.Name + " has {0} kills and {1} deaths!", stats2.Kills, stats2.Deaths));
 				player.Message(string.Format(pOther.Name + " has taken {0} dmg, and caused {1} in total!", stats2.TotalDamageTaken, stats2.TotalDamageDone));
 				return;
 			}
-			player.Message("Can't find player: " + string.Join(" ", args[0]));
+			player.Message("Can't find player: " + string.Join(" ", args));
 			return;
 		}
 
