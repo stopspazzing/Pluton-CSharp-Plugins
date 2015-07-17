@@ -40,8 +40,8 @@ namespace PlutonEssentials
 
         public void On_PluginInit()
         {
-            Author = "Pluton Team";
-            Version = "1.2";
+            //Author = "Pluton Team";
+            //Version = "1.2";
             if (Plugin.IniExists("PlutonEssentials"))
             {
                 Debug.Log("PlutonEssentials config loaded!");
@@ -162,7 +162,7 @@ namespace PlutonEssentials
             {
                 cehe.DamageAmounts[dmg] = 0f;
             }
-            if (cehe.DamageType == Rust.DamageType.ElectricShock)
+            if (cehe.DamageType == Rust.DamageType.Bullet)
             {
                 RecordAllConnected(structure, bp);
                 player.Message("Added everything including connected parts");
