@@ -11,6 +11,10 @@ namespace PlutonEssentials
     {
         public Dictionary<string, Structure> Structures;
 
+        public string Author = "Pluton Team";
+        public string About = "All non-core Pluton commands and functions all rolled into a plugin.";
+        public string Version = "1.2.2";
+
         public void On_ServerInit()
         {
             Structures = new Dictionary<string, Structure>();
@@ -38,8 +42,7 @@ namespace PlutonEssentials
 
         public void On_PluginInit()
         {
-            //Author = "Pluton Team";
-            //Version = "1.2";
+            
             if (Plugin.IniExists("PlutonEssentials"))
             {
                 Debug.Log("PlutonEssentials config loaded!");
@@ -72,7 +75,7 @@ namespace PlutonEssentials
                 ConfigFile.AddSetting("Commands", "Description", "Whatis");
                 ConfigFile.AddSetting("Commands", "Usage", "Howto");
 
-                ConfigFile.AddSetting("Commands", "StartStructureRecording", "Srstop");
+                ConfigFile.AddSetting("Commands", "StartStructureRecording", "Srstart");
                 ConfigFile.AddSetting("Commands", "StopStructureRecording", "Srstop");
                 ConfigFile.AddSetting("Commands", "BuildStructure", "Srbuild");
 
