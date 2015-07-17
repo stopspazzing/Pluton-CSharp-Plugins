@@ -3,7 +3,6 @@ using Pluton.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Timers;
 using UnityEngine;
 
 namespace PlutonEssentials
@@ -11,7 +10,6 @@ namespace PlutonEssentials
     public partial class PlutonEssentials : CSharpPlugin
     {
         public Dictionary<string, Structure> Structures;
-        private Timer aTimer;
 
         public void On_ServerInit()
         {
