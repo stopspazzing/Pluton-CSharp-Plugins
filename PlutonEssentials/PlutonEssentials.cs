@@ -85,32 +85,41 @@ namespace PlutonEssentials
                 ConfigFile.Save();
             }
             IniParser GetConfig = Plugin.GetIni("PlutonEssentials");
-            Commands.Register(GetConfig.GetSetting("Commands", "ShowMyStats", "mystats")).setCallback(Mystats);
-            Commands.Register(GetConfig.GetSetting("Commands", "ShowStatsOther", "statsof")).setCallback(Statsof);
-            Commands.Register(GetConfig.GetSetting("Commands", "ShowLocation", "whereami")).setCallback(Whereami);
-            Commands.Register(GetConfig.GetSetting("Commands", "ShowOnlinePlayers", "players")).setCallback(Players);
-            Commands.Register(GetConfig.GetSetting("Commands", "Help", "help")).setCallback(Help);
-            Commands.Register(GetConfig.GetSetting("Commands", "Commands", "commands")).setCallback(CommandS);
-            Commands.Register(GetConfig.GetSetting("Commands", "Description", "whatis")).setCallback(Whatis);
-            Commands.Register(GetConfig.GetSetting("Commands", "Usage", "howto")).setCallback(Howto);
+            Commands.Register(GetConfig.GetSetting("Commands", "ShowMyStats")).setCallback(Mystats);
+            Commands.Register(GetConfig.GetSetting("Commands", "ShowStatsOther")).setCallback(Statsof);
+            Commands.Register(GetConfig.GetSetting("Commands", "ShowLocation")).setCallback(Whereami);
+            Commands.Register(GetConfig.GetSetting("Commands", "ShowOnlinePlayers")).setCallback(Players);
+            Commands.Register(GetConfig.GetSetting("Commands", "Help")).setCallback(Help);
+            Commands.Register(GetConfig.GetSetting("Commands", "Commands")).setCallback(CommandS);
+            Commands.Register(GetConfig.GetSetting("Commands", "Description")).setCallback(Whatis);
+            Commands.Register(GetConfig.GetSetting("Commands", "Usage")).setCallback(Howto);
+
             if (GetConfig.GetBoolSetting("Config", "StructureRecorder"))
             {
                 Commands.Register(GetConfig.GetSetting("Commands", "StartStructureRecording", "srstart")).setCallback(Srstart);
                 Commands.Register(GetConfig.GetSetting("Commands", "StopStructureRecording", "srstop")).setCallback(Srstop);
                 Commands.Register(GetConfig.GetSetting("Commands", "BuildStructure", "srbuild")).setCallback(Srbuild);
             }
-            aTimer.Dispose();
-            int broadcast_time = int.Parse(GetConfig.GetSetting("Config", "broadcastInterval", "600000"));
-            aTimer = new Timer(broadcast_time);
-            aTimer.Elapsed += Advertise;
-            aTimer.Enabled = true;
+
             DataStore.Flush("StructureRecorder");
             DataStore.Flush("StructureRecorderEveryone");
+
             if (Server.Loaded)
             {
                 Structures = new Dictionary<string, Structure>();
                 LoadStructures();
             }
+
+            if (GetConfig.GetSetting("Config", "broadcastInterval") == null)
+            {
+                return;
+            }
+            else
+            {
+                int broadcast_time = int.Parse(GetConfig.GetSetting("Config", "broadcastInterval", "600000"));
+                Plugin.CreateTimer("Advertise", broadcast_time);
+            }
+
         }
 
         public void On_PlayerConnected(Player player)
@@ -124,7 +133,7 @@ namespace PlutonEssentials
             }
         }
 
-        void Advertise(object source, ElapsedEventArgs e)
+        void AdvertiseCallback(TimedEvent timer)
         {
             IniParser ConfigFile = Plugin.GetIni("PlutonEssentials");
             foreach (string arg in ConfigFile.EnumSection("BroadcastMessage"))
