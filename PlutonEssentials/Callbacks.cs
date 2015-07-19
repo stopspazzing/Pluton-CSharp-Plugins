@@ -1,9 +1,9 @@
 ﻿using Pluton;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
+using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace PlutonEssentials
 {
@@ -39,9 +39,12 @@ namespace PlutonEssentials
 
         public void Players(string[] args, Player player)
         {
-            string msg = Server.Players.Count == 1 ? "You are alone!" : string.Format("There are: {0} players online!", Server.Players.Count);
-            player.Message(msg);
-            return;
+            if (Server.Players.Count == 1)
+            {
+                player.Message("You are alone!");
+                return;
+            }
+            player.Message(string.Format("There are: {0} players online!", Server.Players.Count));
         }
 
         public void Help(string[] args, Player player)
@@ -70,36 +73,41 @@ namespace PlutonEssentials
 
         public void Whatis(string[] args, Player player)
         {
+            if (args.Length < 1)
+            {
+                player.Message("You must provide a command name");
+                return;
+            }
             var cc = new List<ChatCommands>();
             foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins)
             {
                 cc.Add(pl.Value.chatCommands);
             }
-            if (args.Length < 1)
-                player.Message("You must provide a command name");
-            else
+            var list = new List<string>();
+            foreach (ChatCommands cm in cc)
             {
-                var list = new List<string>();
-                foreach (ChatCommands cm in cc)
-                {
-                    list.AddRange(cm.getDescriptions(args[0]));
-                }
-                if (list.Count > 0)
-                    player.Message(string.Join("\r\n", list.ToArray()));
+                list.AddRange(cm.getDescriptions(args[0]));
+            }
+            if (list.Count > 0)
+            {
+                player.Message(string.Join("\r\n", list.ToArray()));
             }
         }
 
         public void Howto(string[] args, Player player)
         {
-            var cc = new List<ChatCommands>();
-            foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins)
-            {
-                cc.Add(pl.Value.chatCommands);
-            }
             if (args.Length < 1)
+            {
                 player.Message("You must provide a command name");
+                return;
+            }
             else
             {
+                var cc = new List<ChatCommands>();
+                foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins)
+                {
+                    cc.Add(pl.Value.chatCommands);
+                }
                 var list = new List<string>();
                 foreach (ChatCommands cm in cc)
                 {
@@ -266,6 +274,37 @@ namespace PlutonEssentials
                             structure.AddComponent(spawnable);
                         }
                     }
+                }
+            }
+        }
+
+        void AdvertiseCallback(TimedEvent timer)
+        {
+            IniParser ConfigFile = Plugin.GetIni("PlutonEssentials");
+            foreach (string arg in ConfigFile.EnumSection("BroadcastMessage"))
+            {
+                Server.Broadcast(ConfigFile.GetSetting("BroadcastMessage", arg));
+            }
+        }
+
+        public void AboutCMD(string[] args, Player player)
+        {
+            if (args.Length < 1)
+            {
+                player.Message("You must provide a command name");
+                return;
+            }
+            var cc = new List<ChatCommands>();
+            foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins)
+            {
+                cc.Add(pl.Value.chatCommands);
+            }
+            //var list = new List<string>();
+            foreach (ChatCommands cm in cc)
+            {
+                if (cm.ToString() == args[0])
+                {
+                    player.Message(cm.plugin.Author + " " + cm.plugin.About + " " + cm.plugin.Version);
                 }
             }
         }
