@@ -1,9 +1,8 @@
 ﻿using Pluton;
-using UnityEngine;
-using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using UnityEngine;
 
 namespace PlutonEssentials
 {
@@ -73,7 +72,7 @@ namespace PlutonEssentials
 
         public void Whatis(string[] args, Player player)
         {
-            if (args.Length < 1)
+            if (args.Length == 0)
             {
                 player.Message("You must provide a command name");
                 return;
@@ -96,7 +95,7 @@ namespace PlutonEssentials
 
         public void Howto(string[] args, Player player)
         {
-            if (args.Length < 1)
+            if (args.Length == 0)
             {
                 player.Message("You must provide a command name");
                 return;
@@ -289,7 +288,7 @@ namespace PlutonEssentials
 
         public void AboutCMD(string[] args, Player player)
         {
-            if (args.Length < 1)
+            if (args.Length == 0)
             {
                 player.Message("You must provide a command name");
                 return;
@@ -299,11 +298,12 @@ namespace PlutonEssentials
             {
                 cc.Add(pl.Value.chatCommands);
             }
-            //var list = new List<string>();
             foreach (ChatCommands cm in cc)
             {
-                if (cm.ToString() == args[0])
+                player.Message("cm = " + cm.ToString().ToLower());
+                if (cm.ToString().ToLower() == args[0].ToLower())
                 {
+                    player.Message("cm = " + args[0].ToLower());
                     player.Message(cm.plugin.Author + " " + cm.plugin.About + " " + cm.plugin.Version);
                 }
             }
