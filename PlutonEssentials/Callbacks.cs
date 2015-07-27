@@ -286,28 +286,28 @@ namespace PlutonEssentials
             }
         }
 
-        public void AboutCMD(string[] args, Player player)
-        {
-            if (args.Length == 0)
-            {
-                player.Message("You must provide a command name");
-                return;
-            }
-            var cc = new List<ChatCommands>();
-            foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins)
-            {
-                cc.Add(pl.Value.chatCommands);
-            }
-            foreach (ChatCommands cm in cc)
-            {
-                player.Message("cm = " + cm.ToString().ToLower());
-                if (cm.ToString().ToLower() == args[0].ToLower())
-                {
-                    player.Message("cm = " + args[0].ToLower());
-                    player.Message(cm.plugin.Author + " " + cm.plugin.About + " " + cm.plugin.Version);
-                }
-            }
-        }
+//        public void AboutCMD(string[] args, Player player)
+//        {
+//            if (args.Length == 0)
+//            {
+//                player.Message("You must provide a command name");
+//                return;
+//            }
+//            var cc = new List<ChatCommands>();
+//            foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins)
+//            {
+//                cc.Add(pl.Value.chatCommands);
+//            }
+//            foreach (ChatCommands cm in cc)
+//            {
+//                player.Message("cm = " + cm.ToString().ToLower());
+//                if (cm.ToString().ToLower() == args[0].ToLower())
+//                {
+//                    player.Message("cm = " + args[0].ToLower());
+//                    player.Message(cm.plugin.Author + " " + cm.plugin.About + " " + cm.plugin.Version);
+//                }
+//            }
+//        }
     }
 }
 
