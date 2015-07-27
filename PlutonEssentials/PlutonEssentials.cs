@@ -42,7 +42,6 @@ namespace PlutonEssentials
             if (Plugin.IniExists("PlutonEssentials"))
             {
                 Debug.Log("PlutonEssentials config loaded!");
-                return;
             }
             else
             {
