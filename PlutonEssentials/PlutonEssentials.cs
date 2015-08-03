@@ -65,8 +65,8 @@ namespace PlutonEssentials
                 ConfigFile.AddSetting("Commands", "ShowLocation", "whereami");
                 ConfigFile.AddSetting("Commands", "ShowOnlinePlayers", "players");
 
-                ConfigFile.AddSetting("Commands", "Help", "Help");
-                ConfigFile.AddSetting("Commands", "Commands", "Commands");
+                ConfigFile.AddSetting("Commands", "Help", "help");
+                ConfigFile.AddSetting("Commands", "Commands", "commands");
 
                 ConfigFile.AddSetting("Commands", "Description", "whatis");
                 ConfigFile.AddSetting("Commands", "Usage", "howto");
@@ -91,7 +91,7 @@ namespace PlutonEssentials
             Commands.Register(GetConfig.GetSetting("Commands", "Commands")).setCallback(CommandS);
             Commands.Register(GetConfig.GetSetting("Commands", "Description")).setCallback(Whatis);
             Commands.Register(GetConfig.GetSetting("Commands", "Usage")).setCallback(Howto);
-            //Commands.Register(GetConfig.GetSetting("Commands", "About")).setCallback(AboutCMD);
+            Commands.Register(GetConfig.GetSetting("Commands", "About")).setCallback(AboutCMD);
 
             if (GetConfig.GetBoolSetting("Config", "StructureRecorder"))
             {
@@ -142,8 +142,8 @@ namespace PlutonEssentials
             {
                 return;
             }
-            string name;
 
+            string name;
             if (DataStore.ContainsKey("StructureRecorder", player.SteamID))
             {
                 name = (string)DataStore.Get("StructureRecorder", player.SteamID);
