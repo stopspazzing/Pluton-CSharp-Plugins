@@ -58,7 +58,7 @@ namespace PlutonEssentials
                 foreach (Item item in storageContainer.inventory.itemList)
                 {
                     var itemData = new Dictionary<string, object>();
-                    itemData.Add("blueprint", item.isBlueprint);
+                    itemData.Add("blueprint", item.IsBlueprint());
                     itemData.Add("id", item.info.itemid);
                     itemData.Add("amount", item.amount);
                     ItemList.Add(itemData);
@@ -101,10 +101,8 @@ namespace PlutonEssentials
                 HasPainting = true;
                 IsCupBoard = false;
                 Signage signage = deployable.GetComponent<Signage>();
-                if (signage.textureID > 0 && FileStorage.server.Exists(signage.textureID, FileStorage.Type.png))
-                {
-                    Painting = FileStorage.server.Get(signage.textureID, FileStorage.Type.png);
-                }
+                byte[] tempImg = FileStorage.server.Get(signage.textureID, FileStorage.Type.png, signage.net.ID);
+                if (signage.textureID > 0 && tempImg != null) Painting = tempImg;
                 PaintingLocked = signage.IsLocked();
             }
             else

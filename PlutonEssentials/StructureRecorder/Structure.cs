@@ -214,7 +214,7 @@ namespace PlutonEssentials
                     if (component.Painting != null)
                     {
                         byte[] painting = component.Painting;
-                        signage.textureID = FileStorage.server.Store(painting, FileStorage.Type.png);
+                        signage.textureID = FileStorage.server.Store(painting, FileStorage.Type.png, signage.net.ID);
                     }
                     if (component.PaintingLocked)
                     {
