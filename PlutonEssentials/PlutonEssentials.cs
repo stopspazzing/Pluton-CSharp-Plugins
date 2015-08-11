@@ -37,7 +37,7 @@ namespace PlutonEssentials
         public void On_PluginInit()
         {
             Author = "Pluton Team";
-            Version = "0.0.0.1 pre-alpha (early-access)[beta build]";
+            Version = "0.0.0.1 (alpha)";
             About = "All non-core Pluton commands and functions all rolled into a plugin.";
             if (Plugin.IniExists("PlutonEssentials"))
             {
