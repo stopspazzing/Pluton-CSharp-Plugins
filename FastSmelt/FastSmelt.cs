@@ -5,7 +5,6 @@ namespace FastSmelt
 {
     public class FastSmelt : CSharpPlugin
     {
-        //public bool isDirty;
         public bool AllowBurntMeat;
         public float CharcoalChance;
         public float ConsumeChance;
