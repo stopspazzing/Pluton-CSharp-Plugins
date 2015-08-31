@@ -37,7 +37,7 @@ namespace PlutonEssentials
         public void On_PluginInit()
         {
             Author = "Pluton Team";
-            Version = "0.0.0.1 (alpha)";
+            Version = "0.1.0.1 (beta)";
             About = "All non-core Pluton commands and functions all rolled into a plugin.";
             if (Plugin.IniExists("PlutonEssentials"))
             {
@@ -58,6 +58,10 @@ namespace PlutonEssentials
                 ConfigFile.AddSetting("Config", "welcomeMessage", "true");
 
                 ConfigFile.AddSetting("Config", "StructureRecorder", "false");
+
+                ConfigFile.AddSetting("Config", "Server_Image", "");
+                ConfigFile.AddSetting("Config", "Server_Description", "This server is running Pluton Framework and is awesome!");
+                ConfigFile.AddSetting("Config", "Server_Url", "");
 
                 ConfigFile.AddSetting("Commands", "ShowMyStats", "mystats");
                 ConfigFile.AddSetting("Commands", "ShowStatsOther", "statsof");
@@ -116,6 +120,10 @@ namespace PlutonEssentials
 
             int broadcast_time = int.Parse(GetConfig.GetSetting("Config", "broadcastInterval", "600000"));
             Plugin.CreateTimer("Advertise", broadcast_time);
+            //Set New Server Settings
+            ConVar.Server.description = GetConfig.GetSetting("Config", "Server_Description");
+            ConVar.Server.headerimage = GetConfig.GetSetting("Config", "Server_Image");
+            ConVar.Server.url = GetConfig.GetSetting("Config", "Server_Url");
         }
 
         public void On_PlayerConnected(Player player)
