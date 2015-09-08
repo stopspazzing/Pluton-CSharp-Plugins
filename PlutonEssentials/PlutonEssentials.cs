@@ -4,12 +4,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using System.Threading;
 
 namespace PlutonEssentials
 {
     public partial class PlutonEssentials : CSharpPlugin
     {
         public Dictionary<string, Structure> Structures;
+        private Dictionary<string, object> NoChatSpamDict;
+        public bool Welcome;
+        public bool NoChatSpam;
+        public int NoChatSpamCooldown;
+        public int NoChatSpamMaxMessages;
+        public string[] BroadcastMessage;
+        public string[] HelpMessage;
+        public string[] WelcomeMessage;
 
         public void On_ServerInit()
         {
@@ -23,8 +32,8 @@ namespace PlutonEssentials
                 Server.CraftingTimeScale = craft;
                 float resource = float.Parse(Config.GetSetting("Config", "resourceGatherMultiplier", "1.0"));
                 World.ResourceGatherMultiplier = resource;
-                float time = float.Parse(Config.GetSetting("Config", "permanentTime", "-1"));
-                if (time != -1f)
+                float time = float.Parse(Config.GetSetting("Config", "permanentTime", "-1.0"));
+                if (time != -1.0f)
                 {
                     World.Time = time;
                     World.FreezeTime();
@@ -37,7 +46,7 @@ namespace PlutonEssentials
         public void On_PluginInit()
         {
             Author = "Pluton Team";
-            Version = "0.1.0.1 (beta)";
+            Version = "0.1.2 (beta)";
             About = "All non-core Pluton commands and functions all rolled into a plugin.";
             if (Plugin.IniExists("PlutonEssentials"))
             {
@@ -51,17 +60,24 @@ namespace PlutonEssentials
                 ConfigFile.AddSetting("Config", "craftTimescale", "1.0");
                 ConfigFile.AddSetting("Config", "resourceGatherMultiplier", "1.0");
 
-                ConfigFile.AddSetting("Config", "permanentTime", "-1");
+                ConfigFile.AddSetting("Config", "permanentTime", "-1.0");
                 ConfigFile.AddSetting("Config", "timescale", "30.0");
 
                 ConfigFile.AddSetting("Config", "broadcastInterval", "600000");
-                ConfigFile.AddSetting("Config", "welcomeMessage", "true");
+                ConfigFile.AddSetting("Config", "BroadcastMessage", "true");
+                ConfigFile.AddSetting("Config", "HelpMessage", "true");
+                ConfigFile.AddSetting("Config", "WelcomeMessage", "true");
 
                 ConfigFile.AddSetting("Config", "StructureRecorder", "false");
+                ConfigFile.AddSetting("Config", "NoChatSpam", "True");
+                ConfigFile.AddSetting("Config", "NoChatSpamCooldown", "2000");
+                ConfigFile.AddSetting("Config", "NoChatSpamMaxMessages", "4");
 
                 ConfigFile.AddSetting("Config", "Server_Image", "");
                 ConfigFile.AddSetting("Config", "Server_Description", "This server is running Pluton Framework and is awesome!");
                 ConfigFile.AddSetting("Config", "Server_Url", "");
+
+                ConfigFile.AddSetting("Config", "PvE", "true");
 
                 ConfigFile.AddSetting("Commands", "ShowMyStats", "mystats");
                 ConfigFile.AddSetting("Commands", "ShowStatsOther", "statsof");
@@ -80,10 +96,10 @@ namespace PlutonEssentials
                 ConfigFile.AddSetting("Commands", "StopStructureRecording", "srstop");
                 ConfigFile.AddSetting("Commands", "BuildStructure", "srbuild");
 
-                ConfigFile.AddSetting("HelpMessage", "help_string0", "This is an empty help section");
+                ConfigFile.AddSetting("HelpMessage", "1", "");
+                ConfigFile.AddSetting("BroadcastMessage", "1", "");
+                ConfigFile.AddSetting("WelcomeMessage", "1", "");
 
-                ConfigFile.AddSetting("BroadcastMessage", "msg0", "This server is powered by Pluton, the new servermod!");
-                ConfigFile.AddSetting("BroadcastMessage", "msg1", "For more information visit our github repo: github.com/Notulp/Pluton or our forum: pluton-team.org");
                 ConfigFile.Save();
             }
             IniParser GetConfig = Plugin.GetIni("PlutonEssentials");
@@ -113,14 +129,36 @@ namespace PlutonEssentials
                 LoadStructures();
             }
 
-            if (GetConfig.GetSetting("Config", "broadcastInterval") == null)
+            //Broadcast settings
+            if (GetConfig.GetBoolSetting("Config", "Broadcast", true))
             {
-                return;
+                int broadcast_time = int.Parse(GetConfig.GetSetting("Config", "broadcastInterval", "600000"));
+                Plugin.CreateTimer("Advertise", broadcast_time);
+                if (GetConfig.EnumSection("BroadcastMessage") != null)
+                {
+                    BroadcastMessage = GetConfig.EnumSection("BroadcastMessage");
+                }
+                else
+                {
+                    BroadcastMessage = new [] { "This server is powered by Pluton, the new servermod!", "For more information visit our github repo: github.com/Notulp/Pluton or our forum: pluton-team.org" };
+                }
             }
 
-            int broadcast_time = int.Parse(GetConfig.GetSetting("Config", "broadcastInterval", "600000"));
-            Plugin.CreateTimer("Advertise", broadcast_time);
+            //Help Message
+            if (GetConfig.GetBoolSetting("Config", "Help", true))
+            {
+                HelpMessage = GetConfig.EnumSection("HelpMessage");
+            }
+
+            //Welcome Message
+            Welcome = GetConfig.GetBoolSetting("Config", "Welcome", true);
+            if (Welcome)
+            {
+                WelcomeMessage = GetConfig.EnumSection("WelcomeMessage");
+            }
+
             //Set New Server Settings
+            ConVar.Server.pve = GetConfig.GetBoolSetting("Config", "PvE", true);
             ConVar.Server.description = GetConfig.GetSetting("Config", "Server_Description");
             ConVar.Server.headerimage = GetConfig.GetSetting("Config", "Server_Image");
             ConVar.Server.url = GetConfig.GetSetting("Config", "Server_Url");
@@ -128,12 +166,21 @@ namespace PlutonEssentials
 
         public void On_PlayerConnected(Player player)
         {
-            IniParser GetConfig = Plugin.GetIni("PlutonEssentials");
-            if (GetConfig.GetBoolSetting("Config", "welcomeMessage", true))
+            if (Welcome)
             {
-                player.Message("Welcome " + player.Name + "!");
-                player.Message(String.Format("This server is powered by Pluton[v{0}]!", Pluton.Bootstrap.Version));
-                player.Message("Visit pluton-team.org for more information or to report bugs!");
+                if (WelcomeMessage != null)
+                {
+                    foreach (string arg in WelcomeMessage)
+                    {
+                        player.Message(arg);
+                    }
+                }
+                else
+                {
+                    player.Message("Welcome " + player.Name + "!");
+                    player.Message(String.Format("This server is powered by Pluton[v{0}]!", Pluton.Bootstrap.Version));
+                    player.Message("Visit pluton-team.org for more information or to report bugs!");
+                }
             }
         }
 
@@ -213,6 +260,26 @@ namespace PlutonEssentials
 
             structure.AddComponent(bp);
             player.Message("Added " + bp.Name);
+        }
+
+        public void On_Chat(ChatEvent ce)
+        {
+            if (NoChatSpam)
+            {
+                var player = ce.User.GameID;
+                DataStore.Add("NoChatSpamMsgCount", player, +1);
+                var count = (int)DataStore.Get("NoChatSpamMsgCount", player);
+                if (count >= NoChatSpamMaxMessages)
+                {
+                    ce.Cancel("Stop spamming chat!");
+                    return;
+                }
+                if (count == 1)
+                {
+                    NoChatSpamDict.Add("NoChatSpamPID", player);
+                    Plugin.CreateParallelTimer("NoChatSpam", NoChatSpamCooldown, NoChatSpamDict);
+                }
+            }
         }
     }
 }

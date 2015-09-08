@@ -49,10 +49,9 @@ namespace PlutonEssentials
 
         public void Help(string[] args, Player player)
         {
-            IniParser ConfigFile = Plugin.GetIni("PlutonEssentials");
-            foreach (string key in ConfigFile.EnumSection("HelpMessage"))
+            foreach (string key in HelpMessage)
             {
-                player.Message(ConfigFile.GetSetting("HelpMessage", key));
+                player.Message(key);
             }
         }
 
@@ -278,12 +277,11 @@ namespace PlutonEssentials
             }
         }
 
-        void AdvertiseCallback(TimedEvent timer)
+        public void AdvertiseCallback(TimedEvent timer)
         {
-            IniParser ConfigFile = Plugin.GetIni("PlutonEssentials");
-            foreach (string arg in ConfigFile.EnumSection("BroadcastMessage"))
+            foreach (string arg in BroadcastMessage)
             {
-                Server.Broadcast(ConfigFile.GetSetting("BroadcastMessage", arg));
+                Server.Broadcast(arg);
             }
         }
 
@@ -301,6 +299,12 @@ namespace PlutonEssentials
                     player.Message(String.Format("Author: {0}, about: {1}, version: {2}\r\n", pl.Value.Author, pl.Value.About, pl.Value.Version));
                 }
             }
+        }
+
+        public void NoChatSpamCallback(TimedEvent timer)
+        {
+            DataStore.Remove("NoChatSpamPID", timer.Args);
+            timer.Kill();
         }
     }
 }
