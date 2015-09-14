@@ -16,7 +16,8 @@ namespace FastSmelt
             Version = "1.0";
             About = "Configurable furnance cooking options.";
             IniParser settings = Plugin.CreateIni("Settings");
-            if (settings != null){
+            if (settings != null)
+            {
                 settings.AddSetting("Settings", "CharcoalChance", "1.5f");
                 settings.AddSetting("Settings", "ConsumeChance", "0.5f");
                 settings.AddSetting("Settings", "ProductionMultiplier", "1.0f");

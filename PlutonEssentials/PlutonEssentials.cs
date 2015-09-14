@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using System.Threading;
 
 namespace PlutonEssentials
 {
@@ -69,7 +68,7 @@ namespace PlutonEssentials
                 ConfigFile.AddSetting("Config", "WelcomeMessage", "true");
 
                 ConfigFile.AddSetting("Config", "StructureRecorder", "false");
-                ConfigFile.AddSetting("Config", "NoChatSpam", "True");
+                ConfigFile.AddSetting("Config", "NoChatSpam", "true");
                 ConfigFile.AddSetting("Config", "NoChatSpamCooldown", "2000");
                 ConfigFile.AddSetting("Config", "NoChatSpamMaxMessages", "4");
 
@@ -156,6 +155,8 @@ namespace PlutonEssentials
             {
                 WelcomeMessage = GetConfig.EnumSection("WelcomeMessage");
             }
+            //NoChatSpam Global variable
+            NoChatSpam = GetConfig.GetBoolSetting("Config", "NoChatSpam", true);
 
             //Set New Server Settings
             ConVar.Server.pve = GetConfig.GetBoolSetting("Config", "PvE", true);
