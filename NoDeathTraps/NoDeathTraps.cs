@@ -1,11 +1,18 @@
 ﻿using System;
 using Pluton;
+using Pluton.Events;
 using ProtoBuf;
+using UnityEngine;
 
 namespace NoDeathTraps
 {
     public class NoDeathTraps : CSharpPlugin
     {
+        public bool isTrap;
+        public bool isOwner;
+        public bool isFriend;
+        //public BaseEntity creatorEntity;
+
         public void On_PluginInit()
         {
             Author = "Corrosion X";
@@ -18,7 +25,17 @@ namespace NoDeathTraps
         public void On_Placement()
         {
             
-            
+        }
+
+        public void On_PlayerHurt(PlayerHurtEvent phe)
+        {
+            if (!phe.Attacker.IsPlayer())
+            {
+                if(phe.Attacker.baseEntity.creatorEntity.ToPlayer().userID == phe.Victim.GameID)
+                {
+                    phe.DamageAmounts = null;
+                }
+            }
         }
     }
 }

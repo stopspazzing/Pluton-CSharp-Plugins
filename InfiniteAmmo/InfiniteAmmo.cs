@@ -5,7 +5,7 @@ namespace InfiniteAmmo
 {
 	public class InfiniteAmmo : CSharpPlugin
 	{
-		public void On_ItemUsed(ItemUsedEvent iue){
+        public void On_ItemUsed(ItemUsedEvent iue){
 			if(iue.Item.Name == "F1 Grenade"){
 				foreach(ItemDefinition item in ItemManager.GetItemDefinitions())
 					if (item.displayName.ToString () ==  iue.Item.Name)
