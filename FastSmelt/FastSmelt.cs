@@ -1,4 +1,5 @@
 ﻿using Pluton;
+using Pluton.Events;
 using System;
 
 namespace FastSmelt
@@ -24,14 +25,16 @@ namespace FastSmelt
                 settings.AddSetting("Settings", "AllowBurntMeat", "false");
             }
             settings.Save();
-            CharcoalChance = float.Parse(settings.GetSetting("CharcoalChance", "1.5f"));
-            ConsumeChance = float.Parse(settings.GetSetting("ConsumeChance", "0.5f"));
-            ProductionMultiplier = float.Parse(settings.GetSetting("ProductionMultiplier", "1.0f"));
-            AllowBurntMeat = bool.Parse(settings.GetSetting("AllowBurntMeat", "false"));
+            CharcoalChance = float.Parse(settings.GetSetting("Settings", "CharcoalChance", "1.5f"));
+            ConsumeChance = float.Parse(settings.GetSetting("Settings", "ConsumeChance", "0.5f"));
+            ProductionMultiplier = float.Parse(settings.GetSetting("Settings", "ProductionMultiplier", "1.0f"));
+            AllowBurntMeat = bool.Parse(settings.GetSetting("Settings", "AllowBurntMeat", "false"));
         }
 
-        public void On_ConsumeFuel(BaseOven oven, Item fuel, ItemModBurnable burnable)
+        public void On_ConsumeFuel(ConsumeFuelEvent cfe)
         {
+            var oven = cfe.BaseOven;
+            var burnable = cfe.Burnable;
             var byproductChance = burnable.byproductChance * CharcoalChance;
             if (oven.allowByproductCreation && burnable.byproductItem != null && UnityEngine.Random.Range(0.0f, 1f) <= byproductChance)
             {
