@@ -45,7 +45,7 @@ namespace PlutonEssentials
         public void On_PluginInit()
         {
             Author = "Pluton Team";
-            Version = "0.1.2 (beta)";
+            Version = "0.1.3 (beta)";
             About = "All non-core Pluton commands and functions all rolled into a plugin.";
             if (Plugin.IniExists("PlutonEssentials"))
             {
@@ -157,6 +157,8 @@ namespace PlutonEssentials
             }
             //NoChatSpam Global variable
             NoChatSpam = GetConfig.GetBoolSetting("Config", "NoChatSpam", true);
+            NoChatSpamCooldown = int.Parse(GetConfig.GetSetting("Config", "NoChatSpamCooldown", "2000"));
+            NoChatSpamMaxMessages = int.Parse(GetConfig.GetSetting("Config", "NoChatSpamMaxMessages", "4"));
 
             //Set New Server Settings
             ConVar.Server.pve = GetConfig.GetBoolSetting("Config", "PvE", true);
@@ -272,7 +274,8 @@ namespace PlutonEssentials
                 var count = (int)DataStore.Get("NoChatSpamMsgCount", player);
                 if (count >= NoChatSpamMaxMessages)
                 {
-                    ce.Cancel("Stop spamming chat!");
+                    ce.Cancel();
+                    ce.User.MessageFrom("NoChatSpam", "Stop spamming chat!");
                     return;
                 }
                 if (count == 1)
