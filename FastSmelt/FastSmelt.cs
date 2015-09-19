@@ -14,25 +14,27 @@ namespace FastSmelt
         public void On_PluginInit()
         {
             Author = "Corrosion X";
-            Version = "1.0";
+            Version = "1.0.1";
             About = "Configurable furnance cooking options.";
-            IniParser settings = Plugin.CreateIni("Settings");
-            if (settings != null)
+            if (!Plugin.IniExists("PlutonEssentials"))
             {
+                IniParser settings = Plugin.CreateIni("Settings");
                 settings.AddSetting("Settings", "CharcoalChance", "1.5f");
                 settings.AddSetting("Settings", "ConsumeChance", "0.5f");
                 settings.AddSetting("Settings", "ProductionMultiplier", "1.0f");
                 settings.AddSetting("Settings", "AllowBurntMeat", "false");
+                settings.Save();
             }
-            settings.Save();
-            CharcoalChance = float.Parse(settings.GetSetting("Settings", "CharcoalChance", "1.5f"));
-            ConsumeChance = float.Parse(settings.GetSetting("Settings", "ConsumeChance", "0.5f"));
-            ProductionMultiplier = float.Parse(settings.GetSetting("Settings", "ProductionMultiplier", "1.0f"));
-            AllowBurntMeat = bool.Parse(settings.GetSetting("Settings", "AllowBurntMeat", "false"));
+            IniParser getconfig = Plugin.GetIni("Settings");
+            CharcoalChance = float.Parse(getconfig.GetSetting("Settings", "CharcoalChance", "1.5f"));
+            ConsumeChance = float.Parse(getconfig.GetSetting("Settings", "ConsumeChance", "0.5f"));
+            ProductionMultiplier = float.Parse(getconfig.GetSetting("Settings", "ProductionMultiplier", "1.0f"));
+            AllowBurntMeat = bool.Parse(getconfig.GetSetting("Settings", "AllowBurntMeat", "false"));
         }
 
         public void On_ConsumeFuel(ConsumeFuelEvent cfe)
         {
+            Server.Broadcast("Consumed");
             var oven = cfe.BaseOven;
             var burnable = cfe.Burnable;
             var byproductChance = burnable.byproductChance * CharcoalChance;
@@ -81,8 +83,9 @@ namespace FastSmelt
                         smeltItem.Drop(oven.inventory.dropPosition, oven.inventory.dropVelocity);
                     }
                 }
-                catch (InvalidOperationException)
+                catch (Exception e)
                 {
+                    Logger.LogException(e);
                 }
             }
         }

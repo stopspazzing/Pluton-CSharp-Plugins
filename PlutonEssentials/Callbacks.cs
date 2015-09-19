@@ -303,7 +303,7 @@ namespace PlutonEssentials
 
         public void NoChatSpamCallback(TimedEvent timer)
         {
-            DataStore.Remove("NoChatSpamPID", timer.Args);
+            DataStore.Remove("NoChatSpamMsgCount", timer.Args["NoChatSpamPID"]);
             timer.Kill();
         }
     }

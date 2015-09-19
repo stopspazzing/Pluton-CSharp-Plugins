@@ -10,20 +10,19 @@ namespace PlutonEssentials
     public partial class PlutonEssentials : CSharpPlugin
     {
         public Dictionary<string, Structure> Structures;
-        private Dictionary<string, object> NoChatSpamDict;
         public bool Welcome;
         public bool NoChatSpam;
         public int NoChatSpamCooldown;
         public int NoChatSpamMaxMessages;
-        public string[] BroadcastMessage;
+        public string[] BroadcastMessage = { "This server is powered by Pluton, the new servermod!", "For more information visit our github repo: github.com/Notulp/Pluton or our forum: pluton-team.org" };
         public string[] HelpMessage;
-        public string[] WelcomeMessage;
+        public string[] WelcomeMessage = {String.Format("This server is powered by Pluton[v{0}]!", Pluton.Bootstrap.Version),"Visit pluton-team.org for more information or to report bugs!"};
 
         public void On_ServerInit()
         {
             Structures = new Dictionary<string, Structure>();
             LoadStructures();
-
+            DataStore.Flush("NoChatSpamMsgCount");
             if (Plugin.IniExists("PlutonEssentials"))
             {
                 IniParser Config = Plugin.GetIni("PlutonEssentials");
@@ -95,9 +94,9 @@ namespace PlutonEssentials
                 ConfigFile.AddSetting("Commands", "StopStructureRecording", "srstop");
                 ConfigFile.AddSetting("Commands", "BuildStructure", "srbuild");
 
-                ConfigFile.AddSetting("HelpMessage", "1", "");
-                ConfigFile.AddSetting("BroadcastMessage", "1", "");
-                ConfigFile.AddSetting("WelcomeMessage", "1", "");
+                ConfigFile.AddSetting("HelpMessage", "1", "default");
+                ConfigFile.AddSetting("BroadcastMessage", "1", "default");
+                ConfigFile.AddSetting("WelcomeMessage", "1", "default");
 
                 ConfigFile.Save();
             }
@@ -137,24 +136,25 @@ namespace PlutonEssentials
                 {
                     BroadcastMessage = GetConfig.EnumSection("BroadcastMessage");
                 }
-                else
-                {
-                    BroadcastMessage = new [] { "This server is powered by Pluton, the new servermod!", "For more information visit our github repo: github.com/Notulp/Pluton or our forum: pluton-team.org" };
-                }
             }
 
             //Help Message
             if (GetConfig.GetBoolSetting("Config", "Help", true))
             {
-                HelpMessage = GetConfig.EnumSection("HelpMessage");
+                if (GetConfig.EnumSection("HelpMessage") != null){
+                    HelpMessage = GetConfig.EnumSection("HelpMessage");
+                }
             }
 
             //Welcome Message
             Welcome = GetConfig.GetBoolSetting("Config", "Welcome", true);
             if (Welcome)
             {
-                WelcomeMessage = GetConfig.EnumSection("WelcomeMessage");
+                if (GetConfig.EnumSection("WelcomeMessage") != null){
+                    WelcomeMessage = GetConfig.EnumSection("WelcomeMessage");
+                }
             }
+
             //NoChatSpam Global variable
             NoChatSpam = GetConfig.GetBoolSetting("Config", "NoChatSpam", true);
             NoChatSpamCooldown = int.Parse(GetConfig.GetSetting("Config", "NoChatSpamCooldown", "2000"));
@@ -171,18 +171,13 @@ namespace PlutonEssentials
         {
             if (Welcome)
             {
-                if (WelcomeMessage != null)
+                player.Message("Welcome " + player.Name + "!");
+                foreach (string arg in WelcomeMessage)
                 {
-                    foreach (string arg in WelcomeMessage)
+                    if (WelcomeMessage != null || WelcomeMessage != "1")
                     {
                         player.Message(arg);
                     }
-                }
-                else
-                {
-                    player.Message("Welcome " + player.Name + "!");
-                    player.Message(String.Format("This server is powered by Pluton[v{0}]!", Pluton.Bootstrap.Version));
-                    player.Message("Visit pluton-team.org for more information or to report bugs!");
                 }
             }
         }
@@ -269,19 +264,33 @@ namespace PlutonEssentials
         {
             if (NoChatSpam)
             {
-                var player = ce.User.GameID;
-                DataStore.Add("NoChatSpamMsgCount", player, +1);
-                var count = (int)DataStore.Get("NoChatSpamMsgCount", player);
-                if (count >= NoChatSpamMaxMessages)
-                {
-                    ce.Cancel();
-                    ce.User.MessageFrom("NoChatSpam", "Stop spamming chat!");
-                    return;
+                try{
+                    var player = ce.User.GameID;
+                    if (!DataStore.ContainsKey("NoChatSpamMsgCount", player))
+                    {
+                        Server.Broadcast("player spam count set to 0");
+                        DataStore.Add("NoChatSpamMsgCount", player, 0);
+                    }
+                    var count = (int)DataStore.Get("NoChatSpamMsgCount", player);
+                    DataStore.Add("NoChatSpamMsgCount", player, count + 1);
+                    Server.Broadcast("player count + 1");
+                    if (count == 1)
+                    {
+                        Server.Broadcast("Timer for spam set");
+                        var NoChatSpamDict = new Dictionary<string, object>();
+                        NoChatSpamDict.Add("NoChatSpamPID", player);
+                        Plugin.CreateParallelTimer("NoChatSpam", NoChatSpamCooldown, NoChatSpamDict);
+                    }
+                    if (count >= NoChatSpamMaxMessages)
+                    {
+                        ce.Cancel();
+                        ce.User.MessageFrom("NoChatSpam", "Stop spamming chat!");
+                        return;
+                    }
                 }
-                if (count == 1)
+                catch (Exception e)
                 {
-                    NoChatSpamDict.Add("NoChatSpamPID", player);
-                    Plugin.CreateParallelTimer("NoChatSpam", NoChatSpamCooldown, NoChatSpamDict);
+                    Logger.LogException(e);
                 }
             }
         }
