@@ -2,10 +2,8 @@
 using Pluton.Events;
 using UnityEngine;
 using System.Collections.Generic;
-using System.Security;
-using Pluton.PlutonUI;
-using System.Threading;
-using SimpleJSON;
+using JSON;
+
 
 namespace Permissions
 {
@@ -23,7 +21,7 @@ namespace Permissions
         {
             Author = "Pluton Team";
             About = "Control who can run which commands";
-            Version = "0.1";
+            Version = "0.3";
             IniParser settings = Plugin.CreateIni("Settings");
             if (settings != null)
             {
@@ -32,20 +30,21 @@ namespace Permissions
             Commands.Register("permissions").setCallback(Permission).setDescription("Add or Remove people in permissions").setCommand(example);
             if (!Plugin.JsonFileExists("permissions"))
             {
-                var obj = new JSON.Object();
-                //perm->playerid{name,permissions,groups,}
-                obj["Permissions"][-1] = "";
-                //obj["Groups"]["Default"][-1]["Tag"] = "*";
-                obj["Groups"]["Default"][-1]["Tag"] = "[Default]";
-                obj["Groups"]["Default"][-1]["Permissions"] = dcommands;
-                //def.Add("Permissions", perm);
-                //def.Add("[Default]", gtag);
-                //defaults for PlutonEssentials
-                //obj["Permissions"][dcommands];
-                groups.Add("Default", def);
-                obj.Add("Players", players);
-                obj.Add("Groups", groups);
-                string json = obj.ToString();
+                JSON.Object perms = new JSON.Object();
+                JSON.Array players = new JSON.Array();
+                JSON.Array groups = new JSON.Array();
+                JSON.Array groupsPerms = new JSON.Array();
+                JSON.Object jsonGroups = new JSON.Object();
+                jsonGroups["name"] = new JSON.Value("default");
+                jsonGroups["tag"] = new JSON.Value("[Default]");
+                foreach (string command in dcommands)
+                    groupsPerms.Add(new JSON.Value(command));
+                jsonGroups["permissions"] = new JSON.Value(groupsPerms);
+                jsonGroups["players"] = new JSON.Value("*");
+                groups.Add(new JSON.Value(jsonGroups));
+                perms["players"] = new JSON.Value(players);
+                perms["groups"] = new JSON.Value(groups);
+                string json = perms.ToString();
                 Plugin.ToJsonFile("permissions", json);
             }
             debug = settings.GetBoolSetting("Settings", "Debug");
@@ -66,8 +65,8 @@ namespace Permissions
 
         public void Permission(string[] args, Player player)
         {
-            //var groups = JSON.Object.Parse(json_perms).GetObject("Groups");
-            var players = JSON.Object.Parse(json_perms).GetObject("Players");
+            //var groups = JSON.Object.Parse(json_perms).GetObject("groups");
+            var players = JSON.Object.Parse(json_perms).GetObject("players");
 
             if (HasPermission(player.GameID, "permission"))
             {
