@@ -12,17 +12,19 @@ namespace PlutonEssentials
         public Dictionary<string, Structure> Structures;
         public bool Welcome;
         public bool NoChatSpam;
+        public bool NoChatSpamIgnoreMod;
         public int NoChatSpamCooldown;
         public int NoChatSpamMaxMessages;
-        public string[] BroadcastMessage = { "This server is powered by Pluton, the new servermod!", "For more information visit our github repo: github.com/Notulp/Pluton or our forum: pluton-team.org" };
-        public string[] HelpMessage;
-        public string[] WelcomeMessage = {String.Format("This server is powered by Pluton[v{0}]!", Pluton.Bootstrap.Version),"Visit pluton-team.org for more information or to report bugs!"};
+        public List<string> BroadcastMessage;
+        public List<string> HelpMessage;
+        public List<string> WelcomeMessage;
 
         public void On_ServerInit()
         {
             Structures = new Dictionary<string, Structure>();
             LoadStructures();
             DataStore.Flush("NoChatSpamMsgCount");
+            DataStore.Flush("NoChatSpamTimerSet");
             if (Plugin.IniExists("PlutonEssentials"))
             {
                 IniParser Config = Plugin.GetIni("PlutonEssentials");
@@ -70,7 +72,7 @@ namespace PlutonEssentials
                 ConfigFile.AddSetting("Config", "NoChatSpam", "true");
                 ConfigFile.AddSetting("Config", "NoChatSpamCooldown", "2000");
                 ConfigFile.AddSetting("Config", "NoChatSpamMaxMessages", "4");
-
+                ConfigFile.AddSetting("Config", "NoChatSpamIgnoreMod", "false");
                 ConfigFile.AddSetting("Config", "Server_Image", "");
                 ConfigFile.AddSetting("Config", "Server_Description", "This server is running Pluton Framework and is awesome!");
                 ConfigFile.AddSetting("Config", "Server_Url", "");
@@ -94,9 +96,13 @@ namespace PlutonEssentials
                 ConfigFile.AddSetting("Commands", "StopStructureRecording", "srstop");
                 ConfigFile.AddSetting("Commands", "BuildStructure", "srbuild");
 
-                ConfigFile.AddSetting("HelpMessage", "1", "default");
-                ConfigFile.AddSetting("BroadcastMessage", "1", "default");
-                ConfigFile.AddSetting("WelcomeMessage", "1", "default");
+                ConfigFile.AddSetting("HelpMessage", "1", "");
+
+                ConfigFile.AddSetting("BroadcastMessage", "1", "This server is powered by Pluton, the new servermod!");
+                ConfigFile.AddSetting("BroadcastMessage", "2", "For more information visit our github repo: github.com/Notulp/Pluton or our forum: pluton-team.org");
+
+                ConfigFile.AddSetting("WelcomeMessage", "1", "This server is powered by Pluton!");
+                ConfigFile.AddSetting("WelcomeMessage", "2", "Visit pluton-team.org for more information or to report bugs!");
 
                 ConfigFile.Save();
             }
@@ -132,17 +138,26 @@ namespace PlutonEssentials
             {
                 int broadcast_time = int.Parse(GetConfig.GetSetting("Config", "broadcastInterval", "600000"));
                 Plugin.CreateTimer("Advertise", broadcast_time);
-                if (GetConfig.EnumSection("BroadcastMessage") != null)
+                foreach (string key in GetConfig.EnumSection("BroadcastMessage"))
                 {
-                    BroadcastMessage = GetConfig.EnumSection("BroadcastMessage");
+                    if (key == null)
+                    {
+                        return;
+                    }
+                    BroadcastMessage.Add(GetConfig.GetSetting("BroadcastMessage", key));
                 }
             }
 
             //Help Message
             if (GetConfig.GetBoolSetting("Config", "Help", true))
             {
-                if (GetConfig.EnumSection("HelpMessage") != null){
-                    HelpMessage = GetConfig.EnumSection("HelpMessage");
+                foreach (string key in GetConfig.EnumSection("HelpMessage"))
+                {
+                    if (key == null)
+                    {
+                        return;
+                    }
+                    HelpMessage.Add(GetConfig.GetSetting("HelpMessage", key));
                 }
             }
 
@@ -150,8 +165,13 @@ namespace PlutonEssentials
             Welcome = GetConfig.GetBoolSetting("Config", "Welcome", true);
             if (Welcome)
             {
-                if (GetConfig.EnumSection("WelcomeMessage") != null){
-                    WelcomeMessage = GetConfig.EnumSection("WelcomeMessage");
+                foreach (string key in GetConfig.EnumSection("WelcomeMessage"))
+                {
+                    if (key == null)
+                    {
+                        return;
+                    }
+                    WelcomeMessage.Add(GetConfig.GetSetting("WelcomeMessage", key));
                 }
             }
 
@@ -159,6 +179,7 @@ namespace PlutonEssentials
             NoChatSpam = GetConfig.GetBoolSetting("Config", "NoChatSpam", true);
             NoChatSpamCooldown = int.Parse(GetConfig.GetSetting("Config", "NoChatSpamCooldown", "2000"));
             NoChatSpamMaxMessages = int.Parse(GetConfig.GetSetting("Config", "NoChatSpamMaxMessages", "4"));
+            NoChatSpamIgnoreMod = GetConfig.GetBoolSetting("Config", "NoChatSpamIgnoreMod");
 
             //Set New Server Settings
             ConVar.Server.pve = GetConfig.GetBoolSetting("Config", "PvE", true);
@@ -174,7 +195,7 @@ namespace PlutonEssentials
                 player.Message("Welcome " + player.Name + "!");
                 foreach (string arg in WelcomeMessage)
                 {
-                    if (WelcomeMessage != null || WelcomeMessage != "1")
+                    if (arg != null)
                     {
                         player.Message(arg);
                     }
@@ -262,31 +283,35 @@ namespace PlutonEssentials
 
         public void On_Chat(ChatEvent ce)
         {
-            if (NoChatSpam)
+            if (NoChatSpam && !ce.User.Admin)
             {
-                try{
+                if (NoChatSpamIgnoreMod && ce.User.Moderator)
+                {
+                    return;
+                }
+                try
+                {
                     var player = ce.User.GameID;
+                    var time = Plugin.GetTimestamp();
                     if (!DataStore.ContainsKey("NoChatSpamMsgCount", player))
                     {
                         Server.Broadcast("player spam count set to 0");
                         DataStore.Add("NoChatSpamMsgCount", player, 0);
+                        DataStore.Add("NoChatSpamTimeStamp", player, time);
                     }
                     var count = (int)DataStore.Get("NoChatSpamMsgCount", player);
+                    var stamp = (float)DataStore.Get("NoChatSpamTimeStamp", player);
+                    var cooldown = (int)DataStore.Get("NoChatSpamCooldown", player);
                     DataStore.Add("NoChatSpamMsgCount", player, count + 1);
                     Server.Broadcast("player count + 1");
-                    if (count == 1)
-                    {
-                        Server.Broadcast("Timer for spam set");
-                        var NoChatSpamDict = new Dictionary<string, object>();
-                        NoChatSpamDict.Add("NoChatSpamPID", player);
-                        Plugin.CreateParallelTimer("NoChatSpam", NoChatSpamCooldown, NoChatSpamDict);
-                    }
-                    if (count >= NoChatSpamMaxMessages)
+                    if (count >= NoChatSpamMaxMessages && stamp + cooldown > time)
                     {
                         ce.Cancel();
                         ce.User.MessageFrom("NoChatSpam", "Stop spamming chat!");
                         return;
                     }
+                    DataStore.Remove("NoChatSpamMsgCount", player);
+                    DataStore.Remove("NoChatSpamTimeStamp", player);
                 }
                 catch (Exception e)
                 {

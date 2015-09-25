@@ -49,6 +49,11 @@ namespace PlutonEssentials
 
         public void Help(string[] args, Player player)
         {
+            if (HelpMessage == null)
+            {
+                player.Message("Help not available");
+                return;
+            }
             foreach (string key in HelpMessage)
             {
                 player.Message(key);
@@ -299,12 +304,6 @@ namespace PlutonEssentials
                     player.Message(String.Format("Author: {0}, about: {1}, version: {2}\r\n", pl.Value.Author, pl.Value.About, pl.Value.Version));
                 }
             }
-        }
-
-        public void NoChatSpamCallback(TimedEvent timer)
-        {
-            DataStore.Remove("NoChatSpamMsgCount", timer.Args["NoChatSpamPID"]);
-            timer.Kill();
         }
     }
 }
