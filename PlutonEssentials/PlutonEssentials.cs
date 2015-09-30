@@ -24,7 +24,7 @@ namespace PlutonEssentials
             Structures = new Dictionary<string, Structure>();
             LoadStructures();
             DataStore.Flush("NoChatSpamMsgCount");
-            DataStore.Flush("NoChatSpamTimerSet");
+            DataStore.Flush("NoChatSpamTimeStamp");
             if (Plugin.IniExists("PlutonEssentials"))
             {
                 IniParser Config = Plugin.GetIni("PlutonEssentials");
@@ -48,6 +48,7 @@ namespace PlutonEssentials
             Author = "Pluton Team";
             Version = "0.1.3 (beta)";
             About = "All non-core Pluton commands and functions all rolled into a plugin.";
+
             if (Plugin.IniExists("PlutonEssentials"))
             {
                 Debug.Log("PlutonEssentials config loaded!");
@@ -192,13 +193,20 @@ namespace PlutonEssentials
         {
             if (Welcome)
             {
-                player.Message("Welcome " + player.Name + "!");
-                foreach (string arg in WelcomeMessage)
+                try
                 {
-                    if (arg != null)
+                    player.Message("Welcome " + player.Name + "!");
+                    foreach (string arg in WelcomeMessage)
                     {
-                        player.Message(arg);
+                        if (arg != null)
+                        {
+                            player.Message(arg);
+                        }
                     }
+                }
+                catch(Exception e)
+                {
+                    Logger.LogException(e);
                 }
             }
         }
