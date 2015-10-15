@@ -25,7 +25,7 @@ namespace Permissions
             IniParser settings = Plugin.CreateIni("Settings");
             if (settings != null)
             {
-                settings.AddSetting("Settings", "Debug", "false");
+                settings["Settings"]["Debug"] = "false";
             }
             Commands.Register("permissions").setCallback(Permission).setDescription("Add or Remove people in permissions").setCommand(example);
             if (!Plugin.JsonFileExists("permissions"))
@@ -47,17 +47,20 @@ namespace Permissions
                 string json = perms.ToString();
                 Plugin.ToJsonFile("permissions", json);
             }
-            debug = settings.GetBoolSetting("Settings", "Debug");
+            IniParser getsettings = Plugin.GetIni("Settings");
+            debug = getsettings["Settings"]["Debug"].ToLower() == "true";
             json_perms = Plugin.FromJsonFile("permissions");
         }
 
         public void On_CommandPermission(CommandPermissionEvent cpe)
         {
-            if (!HasPermission(cpe.User.GameID, cpe.Cmd))
+            if (debug)
             {
-                if (debug)
+                if (!HasPermission(cpe.User.GameID, cpe.Cmd))
                 {
+                
                     Debug.Log(cpe.User + " with steamid " + cpe.User.GameID + " attempted to executed command " + cpe.ChatCommand);
+                
                 }
                 return;
             }
@@ -65,7 +68,7 @@ namespace Permissions
 
         public void Permission(string[] args, Player player)
         {
-            //var groups = JSON.Object.Parse(json_perms).GetObject("groups");
+            var groups = JSON.Object.Parse(json_perms).GetObject("groups");
             var players = JSON.Object.Parse(json_perms).GetObject("players");
 
             if (HasPermission(player.GameID, "permission"))

@@ -148,8 +148,7 @@ namespace PlutonEssentials
             foreach (DeployableComponent component in DeployableComponents.Values)
             {
                 Vector3 v3 = (component.LocalPosition.ToVector3() + spawnAt);
-                GameObject gameObject = GameManager.server.FindPrefab(component.Prefab);
-                BaseEntity ent = GameManager.server.CreateEntity(gameObject, v3, component.LocalRotation.ToQuaternion());
+                BaseEntity ent = GameManager.server.CreateEntity(component.Prefab, v3, component.LocalRotation.ToQuaternion());
                 ent.SpawnAsMapEntity();
                 if (component.HasOwner)
                 {

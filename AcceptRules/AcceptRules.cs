@@ -12,7 +12,7 @@ namespace AcceptRules
         public void On_PluginInit()
         {
             Author = "Corrosion X";
-            Version = "1.0.1";
+            Version = "1.0.3";
             About = "Requires players to accept rules or be disconnected.";
             ServerConsoleCommands.Register("kick.player")
                 .setCallback(Kickplayer)
@@ -30,7 +30,7 @@ namespace AcceptRules
             ruleslist = "<color=white>Welcome to " + ConVar.Server.hostname + " !</color> \n <color=red>By joining this server you agree to the following rules:</color> \n \n";
             foreach (string arg in getini.EnumSection("Rules"))
             {
-                i += 1;
+                ++i;
                 ruleslist += "<color=white>" + i + "</color>" + ". <color=red>" + getini.GetSetting("Rules", arg) + "</color> \n";
             }
             json = @"[	
@@ -136,7 +136,10 @@ namespace AcceptRules
 
         public void On_PlayerConnected(Player player)
         {
-            CommunityEntity.ServerInstance.ClientRPCEx(new Network.SendInfo() { connection = player.basePlayer.net.connection }, null, "AddUI", json.Replace("{ruleslist}", ruleslist));
+            CommunityEntity.ServerInstance.ClientRPCEx(new Network.SendInfo()
+                {
+                    connection = player.basePlayer.net.connection
+                }, null, "AddUI", new Facepunch.ObjectList(json.Replace("{ruleslist}", ruleslist), null, null, null, null));
         }
 
         public void Kickplayer(string[] args)
