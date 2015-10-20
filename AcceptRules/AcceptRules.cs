@@ -12,7 +12,7 @@ namespace AcceptRules
         public void On_PluginInit()
         {
             Author = "Corrosion X";
-            Version = "1.0.3";
+            Version = "1.0.4";
             About = "Requires players to accept rules or be disconnected.";
             ServerConsoleCommands.Register("kick.player")
                 .setCallback(Kickplayer)
@@ -36,7 +36,7 @@ namespace AcceptRules
             json = @"[	
                         {
                             ""name"": ""AcceptRules"",
-                            ""parent"": ""Overlay"",
+                            ""parent"": ""HUD/Overlay"",
                             ""components"":
                             [
                                 {
