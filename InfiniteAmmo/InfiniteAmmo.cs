@@ -10,7 +10,7 @@ namespace InfiniteAmmo
         public void On_PluginInit()
         {
             Author = "Corrosion X";
-            Version = "1.1.2";
+            Version = "1.1.3";
             About = "Infinite ammo for guns, rockets, and throwables.";
             if (!Plugin.IniExists("InfiniteAmmo"))
             {
@@ -28,7 +28,7 @@ namespace InfiniteAmmo
             {
                 return;
             }
-            wte.Weapon.GetItem().
+            wte.Weapon.GetItem().amount++;
         }
 
         public void On_Shooting(ShootEvent se)

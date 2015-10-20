@@ -8,7 +8,7 @@ namespace NoDurability
         public void On_PluginInit()
         {
             Author = "Corrosion X";
-            Version = "1.0.2";
+            Version = "1.0.4";
             About = "Prevents usable items from taking condition damage";
         }
         public void On_ItemLoseCondition(ItemConditionEvent ilc)
@@ -18,7 +18,7 @@ namespace NoDurability
                 if (ilc.Item == null) return;
                 if (player.IsAlive() && player != null)
                 {
-                    ilc.Item.Condition = ilc.Item._item.info.condition.max;
+                    ilc.Item._item.DoRepair(0.0f);
                 }
             }
         }
