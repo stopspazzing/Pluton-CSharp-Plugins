@@ -12,12 +12,12 @@ namespace AcceptRules
         public void On_PluginInit()
         {
             Author = "Corrosion X";
-            Version = "1.0.4";
+            Version = "1.0.5";
             About = "Requires players to accept rules or be disconnected.";
             ServerConsoleCommands.Register("kick.player")
                 .setCallback(Kickplayer)
                 .setDescription("Kicks player if they disagree to rules.")
-                .setUsage("");
+                .setUsage("None");
             if (!Plugin.IniExists("rules"))
             {
                 IniParser ini = Plugin.CreateIni("rules");
@@ -139,7 +139,15 @@ namespace AcceptRules
             CommunityEntity.ServerInstance.ClientRPCEx(new Network.SendInfo()
                 {
                     connection = player.basePlayer.net.connection
-                }, null, "AddUI", new Facepunch.ObjectList(json.Replace("{ruleslist}", ruleslist), null, null, null, null));
+                }, null, "AddUI", new Facepunch.ObjectList(json.Replace("{ruleslist}", ruleslist)));
+        }
+
+        public void On_PlayerDisconnected(Player player)
+        {
+            CommunityEntity.ServerInstance.ClientRPCEx(new Network.SendInfo()
+                {
+                    connection = player.basePlayer.net.connection
+                }, null, "DestroyUI", new Facepunch.ObjectList(player.Name));
         }
 
         public void Kickplayer(string[] args)
