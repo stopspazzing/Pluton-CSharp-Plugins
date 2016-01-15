@@ -35,7 +35,7 @@ namespace PlutonEssentials
             var component = new StructureComponent(bp, v3, q);
             if (component == null)
             {
-                Logger.LogDebug("[StructureRecorder] BuildingPart component is null!");
+                Pluton.Logger.LogDebug("[StructureRecorder] BuildingPart component is null!");
                 return;
             }
             if (!StructureComponents.ContainsKey(component.ToString()))
@@ -59,7 +59,7 @@ namespace PlutonEssentials
             var component = new DeployableComponent(deployable, v3, q);
             if (component == null)
             {
-                Logger.LogDebug("[StructureRecorder] Deployable component is null!");
+                Pluton.Logger.LogDebug("[StructureRecorder] Deployable component is null!");
                 return;
             }
             if (!DeployableComponents.ContainsKey(component.ToString()))
@@ -83,7 +83,7 @@ namespace PlutonEssentials
             var component = new SpawnableComponent(spawnable, v3, q);
             if (component == null)
             {
-                Logger.LogDebug("[StructureRecorder] Deployable component is null!");
+                Pluton.Logger.LogDebug("[StructureRecorder] Deployable component is null!");
                 return;
             }
             if (!SpawnableComponents.ContainsKey(component.ToString()))
@@ -129,7 +129,7 @@ namespace PlutonEssentials
                     {
                         BaseEntity baseEntity = GameManager.server.CreateEntity("build/locks/lock.key", Vector3.zero, new Quaternion());
                         baseEntity.OnDeployed(bb);
-                        int code = component.LockCode.ToInt();
+                        int code = int.Parse(component.LockCode);
                         if ((code & 0x80) != 0)
                         {
                             KeyLock keyLock = baseEntity.GetComponent<KeyLock>();
@@ -192,7 +192,7 @@ namespace PlutonEssentials
                         {
                             BaseEntity baseEntity = GameManager.server.CreateEntity("build/locks/lock.key", Vector3.zero, new Quaternion());
                             baseEntity.OnDeployed(ent);
-                            int code = component.LockCode.ToInt();
+                            int code = int.Parse(component.LockCode);
                             if ((code & 0x80) != 0)
                             {
                                 KeyLock keyLock = baseEntity.GetComponent<KeyLock>();

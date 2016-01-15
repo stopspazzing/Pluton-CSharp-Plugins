@@ -263,7 +263,7 @@ namespace PlutonEssentials
                 }
                 catch (Exception e)
                 {
-                    Logger.LogException(e);
+                    Pluton.Logger.LogException(e);
                 }
             }
         }
@@ -386,7 +386,7 @@ namespace PlutonEssentials
                 }
                 catch (Exception e)
                 {
-                    Logger.LogException(e);
+                    Pluton.Logger.LogException(e);
                 }
             }
             if (ce.Arg.ArgsStr.ToLower().Contains("admin"))
